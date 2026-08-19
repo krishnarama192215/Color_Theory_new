@@ -1,0 +1,1897 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Color Theory — for UX/UI Designers</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Inter+Tight:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   TOKENS
+============================================================ */
+:root{
+  --black:#000000;
+  --text:#000000;
+  --text-secondary:#666666;
+  --text-muted:#8A8A8A;
+  --bg:#FFFFFF;
+  --bg-soft:#F7F7F7;
+  --border:#EAEAEA;
+  --border-strong:#D6D6D6;
+  --success:#16A34A;
+  --warning:#F59E0B;
+  --error:#DC2626;
+  --info:#2563EB;
+  --r-sm:6px;
+  --r-md:10px;
+  --r-lg:16px;
+  --ease:cubic-bezier(.16,1,.3,1);
+}
+@media (prefers-reduced-motion: reduce){
+  *{animation-duration:.001ms !important; transition-duration:.001ms !important;}
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+  color:var(--text);
+  background:var(--bg);
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+.disp{font-family:'Inter Tight','Inter',sans-serif;}
+h1,h2,h3,h4{margin:0; font-family:'Inter Tight','Inter',sans-serif;}
+p{margin:0;}
+button{font-family:inherit; cursor:pointer;}
+a{color:inherit; text-decoration:none;}
+::selection{background:#000; color:#fff;}
+:focus-visible{outline:2px solid #000; outline-offset:3px; border-radius:4px;}
+button:focus-visible, [tabindex]:focus-visible{outline:2px solid #000; outline-offset:2px;}
+
+.app{min-height:100vh; padding-bottom:0;}
+.wrap{max-width:1180px; margin:0 auto; padding:0 32px;}
+@media(max-width:767px){.wrap{padding:0 20px;}}
+
+/* ============================================================
+   NAV
+============================================================ */
+.topnav{
+  position:sticky; top:0; z-index:50; background:rgba(255,255,255,.86);
+  backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--border);
+  height:64px;
+}
+.topnav .wrap{height:100%; display:flex; align-items:center; justify-content:space-between;}
+.brand{font-weight:800; font-size:15px; letter-spacing:.02em; display:flex; align-items:center; gap:8px;}
+.brand-dot{width:8px;height:8px;border-radius:50%;background:#000;}
+.nav-center{display:flex; gap:4px; position:absolute; left:50%; transform:translateX(-50%);}
+.nav-link{
+  padding:8px 14px; font-size:13.5px; font-weight:500; color:var(--text-secondary);
+  border-radius:999px; transition:all .2s var(--ease); position:relative;
+}
+.nav-link:hover{color:var(--text); background:var(--bg-soft);}
+.nav-link.active{color:#fff; background:#000;}
+.nav-right{display:flex; align-items:center; gap:18px;}
+.nav-xp{font-size:12.5px; font-weight:600; color:var(--text-secondary); display:flex; align-items:center; gap:6px;}
+.nav-xp b{color:#000;}
+.avatar{
+  width:32px;height:32px;border-radius:50%; background:#000; color:#fff;
+  display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700;
+}
+@media(max-width:900px){.nav-center{display:none;}}
+
+.bottomnav{
+  display:none; position:fixed; bottom:0; left:0; right:0; z-index:50;
+  background:rgba(255,255,255,.94); backdrop-filter:blur(10px);
+  border-top:1px solid var(--border); padding:8px 8px calc(8px + env(safe-area-inset-bottom));
+}
+@media(max-width:767px){
+  .bottomnav{display:flex; justify-content:space-around;}
+  .app{padding-bottom:70px;}
+}
+.bn-item{
+  display:flex; flex-direction:column; align-items:center; gap:4px; flex:1;
+  padding:6px 0; font-size:10.5px; font-weight:600; color:var(--text-muted);
+}
+.bn-item.active{color:#000;}
+.bn-dot{width:5px;height:5px;border-radius:50%; background:currentColor; opacity:0;}
+.bn-item.active .bn-dot{opacity:1;}
+
+/* ============================================================
+   TYPE / LAYOUT HELPERS
+============================================================ */
+.eyebrow{font-size:12px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--text-muted);}
+.headline-xl{font-size:clamp(48px,9vw,104px); font-weight:800; line-height:.98; letter-spacing:-.03em;}
+.headline-lg{font-size:clamp(32px,5vw,52px); font-weight:800; line-height:1.02; letter-spacing:-.02em;}
+.headline-md{font-size:clamp(24px,3vw,34px); font-weight:700; letter-spacing:-.01em; line-height:1.1;}
+.body-lg{font-size:18px; line-height:1.55; color:var(--text-secondary); font-weight:400;}
+.body-md{font-size:15px; line-height:1.6; color:var(--text-secondary);}
+.mono-num{font-variant-numeric:tabular-nums;}
+
+.btn{
+  display:inline-flex; align-items:center; gap:8px; justify-content:center;
+  padding:13px 24px; font-size:14.5px; font-weight:600; border-radius:999px;
+  border:1px solid transparent; transition:all .2s var(--ease); white-space:nowrap;
+}
+.btn-primary{background:#000; color:#fff;}
+.btn-primary:hover{transform:translateY(-1px); box-shadow:0 8px 20px rgba(0,0,0,.18);}
+.btn-secondary{background:#fff; color:#000; border-color:var(--border-strong);}
+.btn-secondary:hover{border-color:#000; background:var(--bg-soft);}
+.btn-ghost{background:transparent; color:var(--text-secondary); padding:10px 6px;}
+.btn-ghost:hover{color:#000;}
+.btn-sm{padding:9px 16px; font-size:13px;}
+.btn:disabled{opacity:.35; cursor:not-allowed; transform:none !important;}
+
+.card{background:#fff; border:1px solid var(--border); border-radius:var(--r-lg); padding:24px;}
+.chip{display:inline-flex; align-items:center; gap:6px; font-size:11.5px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--text-muted); border:1px solid var(--border); padding:5px 10px; border-radius:999px;}
+
+.progress-track{height:4px; background:var(--border); border-radius:999px; overflow:hidden; position:relative;}
+.progress-fill{height:100%; background:#000; border-radius:999px; transition:width .6s var(--ease);}
+.progress-track.thick{height:8px;}
+
+section{padding:100px 0;}
+@media(max-width:767px){section{padding:56px 0;}}
+.section-head{margin-bottom:48px;}
+.divider{height:1px; background:var(--border); border:none; margin:0;}
+
+.reveal{opacity:0; transform:translateY(16px); transition:opacity .6s var(--ease), transform .6s var(--ease);}
+.reveal.in{opacity:1; transform:none;}
+
+/* Swatch */
+.swatch{border-radius:var(--r-sm); border:1px solid rgba(0,0,0,.08);}
+
+/* Slider */
+.field-label{display:flex; justify-content:space-between; font-size:12.5px; font-weight:600; margin-bottom:8px;}
+.field-label .val{color:var(--text-muted); font-weight:600; font-variant-numeric:tabular-nums;}
+input[type=range]{
+  -webkit-appearance:none; appearance:none; width:100%; height:4px; border-radius:999px; background:var(--border); outline-offset:6px;
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none; width:18px; height:18px; border-radius:50%; background:#000; border:3px solid #fff;
+  box-shadow:0 0 0 1px var(--border-strong); cursor:pointer; margin-top:0;
+}
+input[type=range]::-moz-range-thumb{
+  width:18px; height:18px; border-radius:50%; background:#000; border:3px solid #fff; box-shadow:0 0 0 1px var(--border-strong); cursor:pointer;
+}
+.slider-row{margin-bottom:20px;}
+
+/* Buttons group */
+.seg{display:flex; flex-wrap:wrap; gap:8px;}
+.seg-btn{padding:9px 15px; font-size:13px; font-weight:600; border:1px solid var(--border-strong); border-radius:999px; background:#fff; color:var(--text-secondary); transition:all .15s;}
+.seg-btn:hover{border-color:#000;}
+.seg-btn.active{background:#000; color:#fff; border-color:#000;}
+
+.readout{display:flex; gap:10px; flex-wrap:wrap;}
+.readout .box{border:1px solid var(--border); border-radius:var(--r-sm); padding:10px 14px; flex:1; min-width:90px;}
+.readout .box .k{font-size:10.5px; font-weight:700; letter-spacing:.08em; color:var(--text-muted); text-transform:uppercase;}
+.readout .box .v{font-size:14.5px; font-weight:700; margin-top:2px; font-variant-numeric:tabular-nums;}
+
+/* ============================================================
+   LANDING
+============================================================ */
+.hero{min-height:calc(100svh - 64px); display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:60px 24px;}
+.hero-eyebrow{margin-bottom:22px;}
+.hero-head{margin-bottom:26px;}
+.hero-body{max-width:480px; margin:0 auto 40px;}
+.hero-ctas{display:flex; gap:14px; margin-bottom:64px;}
+@media(max-width:520px){.hero-ctas{flex-direction:column; width:100%; max-width:280px;}}
+
+.hero-orb-wrap{width:180px; height:180px; position:relative; cursor:pointer;}
+.hero-orb{
+  width:100%; height:100%; border-radius:50%; background:#000; transition:background .25s ease, transform .3s var(--ease), box-shadow .3s ease;
+  display:flex; align-items:center; justify-content:center;
+}
+.hero-orb:hover{transform:scale(1.03);}
+.hero-orb-label{color:#fff; font-size:11px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; opacity:.75; pointer-events:none;}
+.hero-split{display:flex; gap:10px; justify-content:center; align-items:center; opacity:0; transition:opacity .4s ease;}
+.hero-split.show{opacity:1;}
+.hero-split .sw{width:34px; height:34px; border-radius:50%; transition:transform .4s var(--ease); border:1px solid rgba(0,0,0,.08);}
+
+.section-eyebrow{text-align:center; margin-bottom:14px;}
+.landing-sections{}
+.feature-row{display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--border); border:1px solid var(--border); border-radius:var(--r-lg); overflow:hidden;}
+@media(max-width:767px){.feature-row{grid-template-columns:1fr;}}
+.feature-cell{background:#fff; padding:36px 28px;}
+.feature-cell .num{font-size:11px; font-weight:700; color:var(--text-muted); letter-spacing:.08em; margin-bottom:14px;}
+.feature-cell h3{font-size:19px; margin-bottom:8px;}
+.feature-cell p{font-size:14px; color:var(--text-secondary); line-height:1.55;}
+
+.step-flow{display:flex; align-items:center; gap:0; flex-wrap:wrap; justify-content:center; margin-top:20px;}
+.step-flow .sf-item{font-size:12.5px; font-weight:700; letter-spacing:.05em; text-transform:uppercase; padding:8px 16px; border:1px solid var(--border); border-radius:999px;}
+.step-flow .sf-arrow{color:var(--text-muted); margin:0 6px; font-size:14px;}
+
+.final-cta{text-align:center; padding:100px 0;}
+
+/* ============================================================
+   DASHBOARD
+============================================================ */
+.dash-hero{display:flex; justify-content:space-between; align-items:flex-end; gap:24px; margin-bottom:40px; flex-wrap:wrap;}
+.dash-ring{position:relative; width:96px; height:96px; flex:none;}
+.dash-ring svg{transform:rotate(-90deg);}
+.dash-ring .pct{position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:20px; font-weight:800;}
+
+.continue-card{display:flex; align-items:center; justify-content:space-between; gap:20px; flex-wrap:wrap; padding:28px;}
+.continue-meta{font-size:12px; color:var(--text-muted); font-weight:600; margin-bottom:8px; letter-spacing:.03em;}
+.continue-title{font-size:22px; font-weight:700; margin-bottom:6px;}
+.continue-time{font-size:13px; color:var(--text-secondary);}
+
+.skills-grid{display:grid; gap:16px;}
+.skill-row{display:grid; grid-template-columns:150px 1fr 40px; align-items:center; gap:16px;}
+@media(max-width:520px){.skill-row{grid-template-columns:100px 1fr 34px;}}
+.skill-row .name{font-size:13.5px; font-weight:600;}
+.skill-row .pct{font-size:13px; font-weight:700; text-align:right; color:var(--text-secondary);}
+
+.grid-2{display:grid; grid-template-columns:1.4fr 1fr; gap:24px;}
+@media(max-width:900px){.grid-2{grid-template-columns:1fr;}}
+
+/* ============================================================
+   ROADMAP
+============================================================ */
+.timeline{position:relative; padding-left:44px;}
+.timeline::before{content:'';position:absolute; left:15px; top:8px; bottom:8px; width:1px; background:var(--border);}
+.tl-item{position:relative; padding-bottom:36px; cursor:pointer;}
+.tl-item:last-child{padding-bottom:0;}
+.tl-dot{position:absolute; left:-44px; top:2px; width:31px; height:31px; border-radius:50%; border:1px solid var(--border-strong); background:#fff; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; transition:all .2s;}
+.tl-item.done .tl-dot{background:#000; border-color:#000; color:#fff;}
+.tl-item.current .tl-dot{background:#fff; border-color:#000; color:#000; box-shadow:0 0 0 4px var(--bg-soft);}
+.tl-item.locked .tl-dot{color:var(--text-muted);}
+.tl-body{padding:2px 0 2px 4px; border-radius:var(--r-md); transition:background .15s;}
+.tl-item:hover .tl-body{background:var(--bg-soft);}
+.tl-body{padding:10px 14px;}
+.tl-title{font-size:16px; font-weight:700; margin-bottom:3px;}
+.tl-item.locked .tl-title{color:var(--text-muted);}
+.tl-desc{font-size:13.5px; color:var(--text-secondary);}
+.tl-meta{font-size:11.5px; color:var(--text-muted); margin-top:6px; font-weight:600;}
+
+/* ============================================================
+   LESSON
+============================================================ */
+.lesson-header{border-bottom:1px solid var(--border); padding:28px 0;}
+.lesson-eyebrow{display:flex; align-items:center; gap:10px; margin-bottom:14px; font-size:12.5px; font-weight:700; color:var(--text-muted);}
+.lesson-title{font-size:clamp(28px,4vw,40px); font-weight:800; margin-bottom:8px; letter-spacing:-.02em;}
+.lesson-sub{font-size:15px; color:var(--text-secondary); margin-bottom:20px;}
+.lesson-progress{display:flex; align-items:center; gap:14px;}
+.step-nav{display:flex; gap:6px; flex:1;}
+.step-pill{flex:1; height:4px; background:var(--border); border-radius:999px; overflow:hidden;}
+.step-pill.done .fill, .step-pill.current .fill{width:100%;}
+.step-pill .fill{height:100%; width:0; background:#000; transition:width .3s;}
+.step-labels{display:flex; justify-content:space-between; margin-top:10px; font-size:11px; font-weight:700; color:var(--text-muted); letter-spacing:.03em; text-transform:uppercase;}
+.step-labels span.current{color:#000;}
+
+.lesson-body{padding:48px 0 80px;}
+.lesson-stage{min-height:340px;}
+.stage-label{font-size:12px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--text-muted); margin-bottom:18px;}
+.prompt-q{font-size:clamp(22px,3vw,30px); font-weight:700; margin-bottom:18px; letter-spacing:-.01em;}
+.explain-block{margin:22px 0; padding:20px 22px; background:var(--bg-soft); border-radius:var(--r-md); font-size:14.5px; line-height:1.6; color:#333;}
+.explain-block b{color:#000;}
+.go-deeper{margin-top:16px; border:1px solid var(--border); border-radius:var(--r-md); overflow:hidden;}
+.go-deeper summary{padding:14px 18px; font-size:13px; font-weight:700; cursor:pointer; list-style:none; display:flex; align-items:center; gap:8px;}
+.go-deeper summary::-webkit-details-marker{display:none;}
+.go-deeper[open] summary{border-bottom:1px solid var(--border);}
+.go-deeper .gd-body{padding:16px 18px; font-size:14px; color:var(--text-secondary); line-height:1.6;}
+
+.lesson-footer{display:flex; justify-content:space-between; align-items:center; margin-top:44px; padding-top:24px; border-top:1px solid var(--border);}
+
+.term-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-top:20px;}
+@media(max-width:700px){.term-grid{grid-template-columns:1fr 1fr;}}
+.term{border:1px solid var(--border); border-radius:var(--r-md); padding:16px;}
+.term .t{font-size:12px; font-weight:800; letter-spacing:.04em; margin-bottom:6px;}
+.term .d{font-size:12.5px; color:var(--text-secondary); line-height:1.4;}
+
+/* mini ui preview components used across lessons */
+.ui-preview{border:1px solid var(--border); border-radius:var(--r-lg); padding:24px; background:#fff;}
+.ui-nav{display:flex; justify-content:space-between; align-items:center; padding-bottom:16px; margin-bottom:16px; border-bottom:1px solid var(--ui-border,var(--border));}
+.ui-nav .b{font-weight:800; font-size:13px;}
+.ui-btn{padding:9px 18px; border-radius:8px; font-size:12.5px; font-weight:700; border:none; display:inline-block;}
+.ui-card{border:1px solid var(--ui-border,var(--border)); border-radius:10px; padding:14px; margin-bottom:10px;}
+.ui-card .t{font-weight:700; font-size:13px; margin-bottom:4px;}
+.ui-card .d{font-size:12px; color:var(--text-muted);}
+.ui-badge{display:inline-block; padding:3px 9px; border-radius:999px; font-size:10.5px; font-weight:700;}
+.ui-alert{padding:12px 14px; border-radius:8px; font-size:12.5px; font-weight:600; display:flex; gap:8px; align-items:center;}
+.ui-input{border:1px solid var(--ui-border,var(--border)); border-radius:8px; padding:10px 12px; font-size:12.5px; color:var(--text-muted); margin-bottom:10px;}
+
+/* color wheel */
+.wheel-area{display:flex; gap:40px; flex-wrap:wrap; align-items:center;}
+.wheel-outer{position:relative; width:260px; height:260px; flex:none;}
+.wheel{width:100%; height:100%; border-radius:50%; position:relative; touch-action:none; box-shadow:0 0 0 1px var(--border);}
+.wheel-handle{position:absolute; width:22px; height:22px; border-radius:50%; background:#fff; border:3px solid #000; transform:translate(-50%,-50%); box-shadow:0 2px 6px rgba(0,0,0,.2); cursor:grab;}
+.wheel-info{flex:1; min-width:240px;}
+.color-name{font-size:26px; font-weight:800; margin-bottom:16px;}
+
+/* HSL lab */
+.lab-grid{display:grid; grid-template-columns:220px 1fr; gap:40px; align-items:start;}
+@media(max-width:700px){.lab-grid{grid-template-columns:1fr;}}
+.lab-preview{width:100%; aspect-ratio:1; border-radius:var(--r-lg); box-shadow:0 0 0 1px var(--border);}
+
+/* harmony */
+.harmony-palette{display:flex; gap:10px; margin:22px 0;}
+.harmony-sw{flex:1; aspect-ratio:1; border-radius:var(--r-md); box-shadow:0 0 0 1px var(--border); position:relative; overflow:hidden;}
+.harmony-sw .lbl{position:absolute; bottom:6px; left:6px; right:6px; font-size:9.5px; font-weight:700; color:#fff; text-shadow:0 1px 3px rgba(0,0,0,.4);}
+
+/* contrast */
+.contrast-demo{display:flex; align-items:center; justify-content:center; border-radius:var(--r-lg); padding:50px 24px; min-height:170px; text-align:center; transition:background .2s, color .2s;}
+.contrast-demo .big{font-size:22px; font-weight:700;}
+.ratio-badge{display:inline-flex; align-items:center; gap:8px; padding:8px 16px; border-radius:999px; font-weight:800; font-size:14px; margin-top:16px;}
+.ratio-badge.pass{background:#DCFCE7; color:#166534;}
+.ratio-badge.fail{background:#FEE2E2; color:#991B1B;}
+.pass-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-top:16px;}
+.pass-item{border:1px solid var(--border); border-radius:var(--r-sm); padding:10px; text-align:center; font-size:11.5px;}
+.pass-item .lv{font-weight:800; font-size:13px; margin-top:2px;}
+.pass-item.ok{background:#F0FDF4;}
+.pass-item.no{background:#FEF2F2;}
+
+/* quiz */
+.quiz-card{max-width:640px; margin:0 auto;}
+.quiz-progress{text-align:center; font-size:12px; font-weight:700; color:var(--text-muted); margin-bottom:8px;}
+.quiz-q{font-size:clamp(20px,3vw,26px); font-weight:700; text-align:center; margin-bottom:28px; line-height:1.3;}
+.quiz-options{display:grid; gap:10px;}
+.quiz-opt{border:1px solid var(--border-strong); border-radius:var(--r-md); padding:16px 18px; font-size:14.5px; font-weight:600; text-align:left; background:#fff; transition:all .15s;}
+.quiz-opt:hover{border-color:#000;}
+.quiz-opt.correct{border-color:var(--success); background:#F0FDF4;}
+.quiz-opt.incorrect{border-color:var(--error); background:#FEF2F2;}
+.quiz-opt.dim{opacity:.5;}
+.quiz-swatch-opt{display:flex; align-items:center; gap:12px;}
+.quiz-swatch-opt .sw{width:28px; height:28px; border-radius:6px; box-shadow:0 0 0 1px var(--border); flex:none;}
+.quiz-feedback{margin-top:20px; padding:18px 20px; border-radius:var(--r-md); font-size:14px; line-height:1.5;}
+.quiz-feedback.correct{background:#F0FDF4; color:#14532D;}
+.quiz-feedback.incorrect{background:#FEF2F2; color:#7F1D1D;}
+.quiz-feedback .verdict{font-weight:800; margin-bottom:4px; font-size:15px;}
+.xp-toast{display:inline-flex; align-items:center; gap:6px; font-size:12px; font-weight:800; background:#000; color:#fff; padding:4px 10px; border-radius:999px; margin-left:8px;}
+
+/* playground */
+.playground-grid{display:grid; grid-template-columns:340px 1fr; gap:40px;}
+@media(max-width:900px){.playground-grid{grid-template-columns:1fr;}}
+.pg-preview{border-radius:var(--r-lg); min-height:320px; box-shadow:0 0 0 1px var(--border); position:relative; overflow:hidden;}
+.pg-actions{display:flex; gap:10px; margin-top:20px;}
+.saved-row{display:flex; gap:10px; margin-top:16px; flex-wrap:wrap;}
+.saved-chip{display:flex; align-items:center; gap:8px; border:1px solid var(--border); border-radius:999px; padding:6px 12px 6px 6px; font-size:12px; font-weight:600;}
+.saved-chip .sw{width:18px; height:18px; border-radius:50%;}
+
+/* tests */
+.test-card{display:flex; justify-content:space-between; align-items:center; padding:22px 24px; gap:16px; flex-wrap:wrap;}
+.test-card .meta{font-size:12.5px; color:var(--text-muted); margin-top:4px;}
+
+/* achievements */
+.badge-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(140px,1fr)); gap:14px;}
+.badge{border:1px solid var(--border); border-radius:var(--r-lg); padding:20px 14px; text-align:center; transition:all .2s;}
+.badge.locked{opacity:.35;}
+.badge .ic{width:44px; height:44px; border-radius:50%; border:1.5px solid #000; margin:0 auto 12px; display:flex; align-items:center; justify-content:center; font-size:18px;}
+.badge.locked .ic{border-color:var(--border-strong);}
+.badge .n{font-size:12px; font-weight:700;}
+
+/* certificate */
+.cert{border:1px solid #000; padding:70px 50px; text-align:center; max-width:720px; margin:0 auto;}
+.cert .k1{font-size:12px; letter-spacing:.2em; font-weight:700; text-transform:uppercase; color:var(--text-muted);}
+.cert .title{font-size:34px; font-weight:800; margin:18px 0 40px;}
+.cert .name{font-size:30px; font-weight:800; margin:16px 0; font-family:'Inter Tight';}
+.cert .score{font-size:44px; font-weight:800; margin:24px 0 6px;}
+
+/* toast */
+#toast-wrap{position:fixed; bottom:24px; left:50%; transform:translateX(-50%); z-index:200; display:flex; flex-direction:column; gap:8px; align-items:center;}
+.toast{background:#000; color:#fff; padding:12px 20px; border-radius:999px; font-size:13px; font-weight:600; display:flex; align-items:center; gap:8px; animation:toastIn .3s var(--ease);}
+@keyframes toastIn{from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:none;}}
+
+.sr-only{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap;}
+.skip-link{position:absolute; left:-999px; top:0; background:#000; color:#fff; padding:10px 16px; z-index:1000; border-radius:0 0 8px 0;}
+.skip-link:focus{left:0;}
+</style>
+</head>
+<body>
+<a href="#main" class="skip-link">Skip to content</a>
+<div class="app" id="app"></div>
+<div id="toast-wrap" aria-live="polite"></div>
+
+<script>
+/* ============================================================
+   COLOR UTILITIES
+============================================================ */
+function clamp(n,a,b){return Math.min(b,Math.max(a,n));}
+function hslToRgb(h,s,l){
+  h=((h%360)+360)%360; s=clamp(s,0,100)/100; l=clamp(l,0,100)/100;
+  const c=(1-Math.abs(2*l-1))*s, x=c*(1-Math.abs((h/60)%2-1)), m=l-c/2;
+  let r=0,g=0,b=0;
+  if(h<60){r=c;g=x;b=0;} else if(h<120){r=x;g=c;b=0;} else if(h<180){r=0;g=c;b=x;}
+  else if(h<240){r=0;g=x;b=c;} else if(h<300){r=x;g=0;b=c;} else {r=c;g=0;b=x;}
+  return [Math.round((r+m)*255),Math.round((g+m)*255),Math.round((b+m)*255)];
+}
+function rgbToHsl(r,g,b){
+  r/=255; g/=255; b/=255;
+  const max=Math.max(r,g,b), min=Math.min(r,g,b);
+  let h=0,s=0,l=(max+min)/2;
+  if(max!==min){
+    const d=max-min;
+    s=l>0.5? d/(2-max-min) : d/(max+min);
+    switch(max){
+      case r: h=(g-b)/d+(g<b?6:0); break;
+      case g: h=(b-r)/d+2; break;
+      case b: h=(r-g)/d+4; break;
+    }
+    h*=60;
+  }
+  return [Math.round(h),Math.round(s*100),Math.round(l*100)];
+}
+function rgbToHex(r,g,b){return '#'+[r,g,b].map(v=>clamp(v,0,255).toString(16).padStart(2,'0')).join('').toUpperCase();}
+function hexToRgb(hex){
+  hex=hex.replace('#','');
+  if(hex.length===3) hex=hex.split('').map(c=>c+c).join('');
+  const num=parseInt(hex,16);
+  return [(num>>16)&255,(num>>8)&255,num&255];
+}
+function hslToHex(h,s,l){const [r,g,b]=hslToRgb(h,s,l); return rgbToHex(r,g,b);}
+function hexToHsl(hex){const [r,g,b]=hexToRgb(hex); return rgbToHsl(r,g,b);}
+function relLuminance(hex){
+  let [r,g,b]=hexToRgb(hex).map(v=>{v/=255; return v<=0.03928? v/12.92 : Math.pow((v+0.055)/1.055,2.4);});
+  return 0.2126*r+0.7152*g+0.0722*b;
+}
+function contrastRatio(hex1,hex2){
+  const L1=relLuminance(hex1), L2=relLuminance(hex2);
+  const light=Math.max(L1,L2), dark=Math.min(L1,L2);
+  return (light+0.05)/(dark+0.05);
+}
+function nameForHue(h){
+  const names=[[15,'Red'],[45,'Orange'],[70,'Yellow'],[170,'Green'],[200,'Cyan'],[255,'Blue'],[290,'Purple'],[330,'Magenta'],[361,'Red']];
+  for(const [max,name] of names) if(h<=max) return name;
+  return 'Red';
+}
+function simulateBlind(hex,type){
+  // simplified simulation matrices (Brettel-ish approximation)
+  const [r,g,b]=hexToRgb(hex);
+  const M={
+    protanopia:[[0.567,0.433,0],[0.558,0.442,0],[0,0.242,0.758]],
+    deuteranopia:[[0.625,0.375,0],[0.7,0.3,0],[0,0.3,0.7]],
+    tritanopia:[[0.95,0.05,0],[0,0.433,0.567],[0,0.475,0.525]],
+    normal:[[1,0,0],[0,1,0],[0,0,1]]
+  }[type]||[[1,0,0],[0,1,0],[0,0,1]];
+  const nr=r*M[0][0]+g*M[0][1]+b*M[0][2];
+  const ng=r*M[1][0]+g*M[1][1]+b*M[1][2];
+  const nb=r*M[2][0]+g*M[2][1]+b*M[2][2];
+  return rgbToHex(nr,ng,nb);
+}
+function harmonyPalette(baseHex,type){
+  const [h,s,l]=hexToHsl(baseHex);
+  const mk=hh=>hslToHex(hh,s,l);
+  switch(type){
+    case 'mono': return [hslToHex(h,s,Math.max(l-30,8)),hslToHex(h,s,Math.max(l-15,15)),baseHex,hslToHex(h,Math.max(s-25,10),Math.min(l+18,92)),hslToHex(h,Math.max(s-45,5),Math.min(l+34,96))];
+    case 'analogous': return [mk(h-30),mk(h-15),baseHex,mk(h+15),mk(h+30)];
+    case 'complementary': return [hslToHex(h,s,Math.max(l-18,10)),baseHex,hslToHex(h,Math.max(s-30,10),Math.min(l+20,90)),mk(h+180),hslToHex(h+180,s,Math.max(l-18,10))];
+    case 'splitcomp': return [baseHex,mk(h+150),mk(h+210),hslToHex(h,Math.max(s-30,10),Math.min(l+22,90)),hslToHex(h,s,Math.max(l-18,10))];
+    case 'triadic': return [baseHex,mk(h+120),mk(h+240),hslToHex(h,Math.max(s-30,10),Math.min(l+22,90)),hslToHex(h,s,Math.max(l-18,10))];
+    case 'tetradic': return [baseHex,mk(h+90),mk(h+180),mk(h+270),hslToHex(h,Math.max(s-30,10),Math.min(l+22,90))];
+    default: return [baseHex];
+  }
+}
+
+/* ============================================================
+   STATE
+============================================================ */
+const LESSONS=[
+  {id:1,title:'Why Color Matters',desc:'Understand why color exists in UX.',time:'8 min'},
+  {id:2,title:'The Color Wheel',desc:'Understand relationships between colors.',time:'10 min'},
+  {id:3,title:'Hue, Saturation & Lightness',desc:'Understand how colors change.',time:'12 min'},
+  {id:4,title:'Color Harmony',desc:'Understand how colors work together.',time:'12 min'},
+  {id:5,title:'Color Psychology',desc:'Understand color in context, not as universal rules.',time:'10 min'},
+  {id:6,title:'Building a UI Color System',desc:'Give every color a job to do.',time:'14 min'},
+  {id:7,title:'Accessibility & Contrast',desc:'Make sure everyone can read your interface.',time:'12 min'},
+  {id:8,title:'Visual Hierarchy',desc:'Color is one tool for guiding attention.',time:'10 min'},
+  {id:9,title:'UI States',desc:'Show what is happening, clearly.',time:'9 min'},
+  {id:10,title:'Real-World Color Analysis',desc:'Study how real products use color.',time:'11 min'},
+  {id:11,title:'Build Your Color Palette',desc:'Apply everything to a real project.',time:'15 min'},
+  {id:12,title:'Final UX Color Challenge',desc:'Redesign a broken interface.',time:'14 min'},
+];
+const STEPS=['Concept','Explore','Practice','Quiz','Complete'];
+
+const QUESTIONS=[
+  {id:1,lesson:2,type:'mc',difficulty:1,xp:10,q:'Which two colors sit directly opposite each other on the color wheel?',options:['Red and Green','Blue and Yellow','Red and Blue','Green and Purple'],correct:0,explain:'Red and green sit opposite each other — that\'s what makes them complementary.'},
+  {id:2,lesson:2,type:'tf',difficulty:1,xp:10,q:'True or false: primary colors are made by mixing other colors.',options:['True','False'],correct:1,explain:'Primary colors can\'t be created by mixing others — every other color is built from them.'},
+  {id:3,lesson:3,type:'mc',difficulty:1,xp:10,q:'Which property answers "how light or dark is it?"',options:['Hue','Saturation','Lightness','Contrast'],correct:2,explain:'Lightness controls how close a color sits to black or white.'},
+  {id:4,lesson:3,type:'mc',difficulty:1,xp:10,q:'Lowering saturation to 0% while keeping hue and lightness the same produces:',options:['A darker version of the color','A brighter version of the color','A shade of gray','A complementary color'],correct:2,explain:'Removing all saturation leaves only lightness — which is gray.'},
+  {id:5,lesson:3,type:'mc',difficulty:2,xp:10,q:'A "tint" is created by:',options:['Adding black','Adding white','Adding gray','Rotating the hue'],correct:1,explain:'A tint is a color mixed with white, which raises lightness.'},
+  {id:6,lesson:4,type:'visual',difficulty:1,xp:10,q:'Which color scheme uses only one hue at different lightness and saturation levels?',options:['Triadic','Monochromatic','Complementary','Tetradic'],correct:1,explain:'Monochromatic palettes stay within a single hue.'},
+  {id:7,lesson:4,type:'mc',difficulty:2,xp:10,q:'A triadic color scheme places colors how far apart on the wheel?',options:['30°','90°','120°','180°'],correct:2,explain:'Triadic colors are spaced evenly, 120° apart — three points on the wheel.'},
+  {id:8,lesson:4,type:'mc',difficulty:1,xp:10,q:'Which scheme creates the strongest visual contrast?',options:['Monochromatic','Analogous','Complementary','Split-complementary'],correct:2,explain:'Complementary colors sit opposite each other, producing the highest contrast.'},
+  {id:9,lesson:5,type:'scenario',difficulty:2,xp:15,q:'You\'re designing a meditation app. Which reasoning is most sound?',options:['Bright red always feels energetic, use it everywhere','Color associations shift with context — test soft, muted tones with real users','Blue is scientifically proven to be calming in every culture','Color choice barely matters for mood'],correct:1,explain:'Color meaning depends on context, culture and brand — never a fixed universal rule.'},
+  {id:10,lesson:5,type:'tf',difficulty:1,xp:10,q:'True or false: the same color can mean different things in different cultures.',options:['True','False'],correct:0,explain:'Color meaning is culturally and contextually dependent, not universal.'},
+  {id:11,lesson:6,type:'mc',difficulty:1,xp:10,q:'In a UI color system, what is the job of a "semantic" color?',options:['To look attractive','To communicate a specific meaning like success or error','To fill empty space','To match the logo exactly'],correct:1,explain:'Semantic colors carry meaning — success, warning, error, information.'},
+  {id:12,lesson:6,type:'mc',difficulty:2,xp:10,q:'Which is the best reason to limit a UI to one accent color?',options:['It\'s a design trend','It makes the important action easier to find','It uses less memory','It looks more colorful'],correct:1,explain:'A restrained palette makes the one important action stand out.'},
+  {id:13,lesson:7,type:'mc',difficulty:1,xp:10,q:'What contrast ratio does WCAG require for normal text at level AA?',options:['2.1 : 1','3.0 : 1','4.5 : 1','7.0 : 1'],correct:2,explain:'AA requires at least 4.5:1 contrast for normal-sized text.'},
+  {id:14,lesson:7,type:'mc',difficulty:2,xp:10,q:'Large text has a lower required contrast ratio because:',options:['Large text is decorative','Large text is naturally easier to read at lower contrast','Large text is used less often','It is not actually lower'],correct:1,explain:'Larger, bolder strokes remain legible at lower contrast, so AA only requires 3:1.'},
+  {id:15,lesson:7,type:'scenario',difficulty:2,xp:15,q:'You want to show an error state. What\'s the most accessible approach?',options:['Make the field border red only','Use red plus an icon and a text message','Flash the screen red briefly','Play a sound only'],correct:1,explain:'Never rely on color alone — pair it with an icon and text.'},
+  {id:16,lesson:8,type:'mc',difficulty:1,xp:10,q:'Which of these is NOT a tool for building visual hierarchy?',options:['Color','Size','File name','Spacing'],correct:2,explain:'A file name has no visual presence in the interface — size, color, contrast and spacing do.'},
+  {id:17,lesson:8,type:'tf',difficulty:1,xp:10,q:'True or false: color is the only way to create visual hierarchy.',options:['True','False'],correct:1,explain:'Color is one tool among several — size, spacing and contrast matter just as much.'},
+  {id:18,lesson:9,type:'mc',difficulty:1,xp:10,q:'Which UI state usually shows a spinner or progress indicator?',options:['Hover','Loading','Disabled','Focus'],correct:1,explain:'Loading states signal that the system is working on a response.'},
+  {id:19,lesson:9,type:'mc',difficulty:2,xp:10,q:'A disabled button should typically:',options:['Look identical to an active button','Use lower contrast and block interaction','Turn bright red','Blink to draw attention'],correct:1,explain:'Reduced contrast plus blocked interaction communicates "not available right now."'},
+  {id:20,lesson:10,type:'scenario',difficulty:2,xp:15,q:'A food delivery app uses a warm red-orange as its primary accent. What\'s the most likely reasoning?',options:['Red-orange is cheap to print','Warm tones are associated with appetite and urgency','It was the only color left','Cool colors are illegal for food brands'],correct:1,explain:'Warm colors are commonly associated with appetite, energy and urgency — a deliberate choice for food brands.'},
+  {id:21,lesson:11,type:'mc',difficulty:2,xp:10,q:'When building a palette for a banking app, which approach best builds trust?',options:['Many bright, playful colors','A restrained, neutral palette with one confident accent','Only pure black and pure white, no accent','Random colors per screen'],correct:1,explain:'Financial products lean on restraint and one confident accent to feel trustworthy and clear.'},
+  {id:22,lesson:12,type:'mc',difficulty:3,xp:15,q:'An interface uses 9 different accent colors across one screen. What\'s the biggest risk?',options:['It will load slower','Nothing important stands out, and hierarchy breaks down','Users will love the variety','It becomes more accessible'],correct:1,explain:'Too many accents compete for attention, so nothing reads as more important than anything else.'},
+  {id:23,lesson:1,type:'mc',difficulty:1,xp:10,q:'What can color help establish in an interface?',options:['File size','Hierarchy and meaning','Server response time','Font licensing'],correct:1,explain:'Color helps establish hierarchy, draw attention, and communicate meaning.'},
+  {id:24,lesson:1,type:'tf',difficulty:1,xp:10,q:'True or false: a well-designed black-and-white UI can already have a clear hierarchy.',options:['True','False'],correct:0,explain:'Size, spacing and contrast alone can create hierarchy — color adds to it, but isn\'t required.'},
+  {id:25,lesson:2,type:'mc',difficulty:2,xp:10,q:'Warm colors on the wheel include:',options:['Blue, green, purple','Red, orange, yellow','Black, white, gray','Cyan, teal, indigo'],correct:1,explain:'Red, orange and yellow are considered the warm half of the wheel.'},
+  {id:26,lesson:6,type:'scenario',difficulty:2,xp:15,q:'Your success, warning and error colors all look similar in low light. What should you fix first?',options:['Rename the colors','Increase the contrast and hue separation between semantic colors','Remove the colors entirely','Add more colors to the palette'],correct:1,explain:'Semantic colors need to stay clearly distinguishable from each other, in any lighting.'},
+  {id:27,lesson:3,type:'mc',difficulty:2,xp:10,q:'A "shade" is created by:',options:['Adding white','Adding black','Removing hue entirely','Increasing saturation only'],correct:1,explain:'A shade is a color mixed with black, which lowers lightness.'},
+  {id:28,lesson:5,type:'mc',difficulty:1,xp:10,q:'Which factor does NOT influence how a color is perceived?',options:['Culture','Brand context','Surrounding colors','The font file size'],correct:3,explain:'Font file size is a technical detail with no bearing on color perception.'},
+  {id:29,lesson:7,type:'mc',difficulty:1,xp:10,q:'What does AAA-level contrast require for normal text?',options:['3 : 1','4.5 : 1','7 : 1','1 : 1'],correct:2,explain:'AAA is the strictest tier, requiring at least 7:1 for normal text.'},
+  {id:30,lesson:8,type:'scenario',difficulty:2,xp:15,q:'A dashboard has 5 elements all in bold, saturated color. What happens to hierarchy?',options:['It becomes clearer','Everything competes for attention and nothing stands out','The page loads faster','Users read it top to bottom automatically'],correct:1,explain:'When everything is emphasized, nothing is — hierarchy needs contrast between elements, not uniform intensity.'},
+];
+
+let state={
+  view:'landing',
+  lessonId:null,
+  step:0,
+  lessonSubStep:0,
+  quizIndex:0,
+  quizScore:0,
+  quizAnswered:false,
+  quizSelected:null,
+  activeTestId:null,
+  testAnswered:{},
+  testIndex:0,
+  user:{
+    name:'Alex Morgan',
+    level:4,
+    levelName:'UI Color Designer',
+    xp:620,
+    streak:7,
+    quizAccuracy:87,
+    achievements:6,
+    savedPalettesCount:3,
+  },
+  completedLessons:new Set([1,2,3,4,5,6,7,8]),
+  currentLessonHighlight:8,
+  skills:{'Color Fundamentals':94,'Harmony':86,'Color Systems':79,'Accessibility':68,'Hierarchy':84,'Psychology':78,'Application':74},
+  savedPalettes:[
+    {name:'Banking Neutral',colors:['#0F172A','#2563EB','#F1F5F9','#0F172A']},
+    {name:'Fitness Energy',colors:['#111111','#F97316','#FAFAFA','#111111']},
+    {name:'Wellness Calm',colors:['#1B2A24','#4F7A6B','#F4F1EC','#1B2A24']},
+  ],
+  testResults:{1:null,2:null,3:null},
+  finalProjectDone:false,
+  achievementsUnlocked:new Set(['explorer','harmony','thinker','builder','contrast','hierarchy']),
+  cbType:'normal',
+  wheelHue:210, wheelSat:70, wheelLight:55,
+  labH:210, labS:70, labL:55,
+  harmonyBase:'#2563EB', harmonyType:'complementary',
+  contrastText:'#FFFFFF', contrastBg:'#8A8A8A',
+  hierarchyColor:60, hierarchySize:50, hierarchyContrast:50,
+  sysColors:{primary:'#000000',secondary:'#666666',accent:'#2563EB',background:'#FFFFFF',text:'#000000',surface:'#F7F7F7'},
+  playH:265,playS:80,playL:52,playHarmony:'analogous',
+  statesColors:{default:'#000000',hover:'#1a1a1a',focus:'#000000',active:'#333333',loading:'#666666',success:'#16A34A',error:'#DC2626',disabled:'#CCCCCC'},
+  projectIndustry:'Banking',
+  projectColors:{primary:'#0F172A',accent:'#2563EB',neutral:'#F1F5F9',success:'#16A34A',error:'#DC2626'},
+  challengeFixed:new Set(),
+};
+
+const ACHIEVEMENT_DEFS=[
+  {id:'explorer',name:'Color Explorer',ic:'◐'},
+  {id:'harmony',name:'Harmony Master',ic:'◔'},
+  {id:'contrast',name:'Contrast Detective',ic:'◑'},
+  {id:'thinker',name:'Color Thinker',ic:'◒'},
+  {id:'accessibility',name:'Accessibility Champion',ic:'◓'},
+  {id:'hierarchy',name:'Hierarchy Master',ic:'◕'},
+  {id:'builder',name:'Palette Builder',ic:'●'},
+  {id:'analyst',name:'Color Analyst',ic:'◍'},
+  {id:'system',name:'Color System Designer',ic:'◈'},
+  {id:'master',name:'UX Color Master',ic:'★'},
+];
+
+function toast(msg){
+  const wrap=document.getElementById('toast-wrap');
+  const el=document.createElement('div');
+  el.className='toast';
+  el.textContent=msg;
+  wrap.appendChild(el);
+  setTimeout(()=>{el.style.opacity='0'; el.style.transition='opacity .3s'; setTimeout(()=>el.remove(),300);},1800);
+}
+function addXP(n){ state.user.xp+=n; toast('+'+n+' XP'); }
+
+/* ============================================================
+   ROUTER / RENDER
+============================================================ */
+function nav(view,extra){
+  state.view=view;
+  if(extra) Object.assign(state,extra);
+  render();
+  window.scrollTo({top:0,behavior:'instant' in window ? 'instant':'auto'});
+}
+function openLesson(id){
+  nav('lesson',{lessonId:id,step:0});
+}
+
+function render(){
+  const app=document.getElementById('app');
+  app.innerHTML = navHtml() + `<main id="main">` + viewHtml() + `</main>` + bottomNavHtml();
+  bindGlobal();
+  bindView();
+  requestAnimationFrame(()=>{
+    document.querySelectorAll('.reveal').forEach(el=>el.classList.add('in'));
+  });
+}
+
+function navHtml(){
+  const v=state.view;
+  const initials=state.user.name.split(' ').map(s=>s[0]).join('');
+  const items=[['dashboard','Learn'],['playground','Playground'],['tests','Tests']];
+  return `
+  <header class="topnav">
+    <div class="wrap">
+      <div class="brand" role="link" tabindex="0" data-nav="landing"><span class="brand-dot"></span>COLOR THEORY</div>
+      <nav class="nav-center" aria-label="Primary">
+        <button class="nav-link ${v==='dashboard'||v==='roadmap'?'active':''}" data-nav="dashboard">Learn</button>
+        <button class="nav-link ${v==='lesson'?'active':''}" data-nav="roadmap">Practice</button>
+        <button class="nav-link ${v==='playground'?'active':''}" data-nav="playground">Playground</button>
+        <button class="nav-link ${v==='tests'||v==='testtaking'?'active':''}" data-nav="tests">Tests</button>
+      </nav>
+      <div class="nav-right">
+        <div class="nav-xp">XP&nbsp;<b>${state.user.xp}</b></div>
+        <button class="nav-link" style="padding:8px 12px" data-nav="progress">Progress</button>
+        <button class="avatar" data-nav="profile" aria-label="Profile">${initials}</button>
+      </div>
+    </div>
+  </header>`;
+}
+function bottomNavHtml(){
+  const v=state.view;
+  function item(view,label,icon){
+    return `<button class="bn-item ${v===view?'active':''}" data-nav="${view}"><span>${icon}</span><span>${label}</span><span class="bn-dot"></span></button>`;
+  }
+  return `<nav class="bottomnav" aria-label="Primary mobile">
+    ${item('dashboard','Learn','◱')}
+    ${item('playground','Play','◐')}
+    ${item('progress','Progress','◑')}
+    ${item('profile','Profile','●')}
+  </nav>`;
+}
+
+function bindGlobal(){
+  document.querySelectorAll('[data-nav]').forEach(el=>{
+    el.addEventListener('click',()=>{
+      const v=el.getAttribute('data-nav');
+      if(v==='roadmap') nav('roadmap');
+      else nav(v);
+    });
+  });
+}
+
+function viewHtml(){
+  switch(state.view){
+    case 'landing': return landingView();
+    case 'dashboard': return dashboardView();
+    case 'roadmap': return roadmapView();
+    case 'lesson': return lessonView();
+    case 'playground': return playgroundView();
+    case 'tests': return testsView();
+    case 'testtaking': return testTakingView();
+    case 'progress': return progressView();
+    case 'profile': return profileView();
+    case 'certificate': return certificateView();
+    default: return landingView();
+  }
+}
+
+/* ============================================================
+   LANDING
+============================================================ */
+function landingView(){
+  return `
+  <section class="hero">
+    <div class="eyebrow hero-eyebrow">COLOR THEORY / UX DESIGN</div>
+    <h1 class="headline-xl hero-head">COLOR<br>IS A<br>LANGUAGE.</h1>
+    <p class="body-lg hero-body">Learn how color communicates hierarchy, meaning, emotion, interaction and accessibility.</p>
+    <div class="hero-ctas">
+      <button class="btn btn-primary" data-nav="dashboard">START LEARNING →</button>
+      <button class="btn btn-secondary" data-nav="roadmap">EXPLORE THE COURSE</button>
+    </div>
+    <div class="hero-orb-wrap" id="orbWrap" aria-label="Move your cursor near the circle, then click it" role="button" tabindex="0">
+      <div class="hero-orb" id="orb"><span class="hero-orb-label">HOVER · CLICK</span></div>
+    </div>
+    <div class="hero-split" id="orbSplit">
+      <div class="sw" style="background:#000"></div>
+      <div class="sw" style="background:#fff;box-shadow:0 0 0 1px var(--border)"></div>
+      <div class="sw" style="background:#DC2626"></div>
+      <div class="sw" style="background:#2563EB"></div>
+      <div class="sw" style="background:#F59E0B"></div>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <section class="wrap">
+    <div class="section-eyebrow eyebrow" style="text-align:center">WHAT YOU'LL LEARN</div>
+    <div class="feature-row reveal">
+      <div class="feature-cell">
+        <div class="num">01</div>
+        <h3>LEARN</h3>
+        <p>12 structured lessons — from the color wheel to full UI color systems.</p>
+      </div>
+      <div class="feature-cell">
+        <div class="num">02</div>
+        <h3>EXPERIMENT</h3>
+        <p>An interactive color wheel, HSL lab, harmony generator and contrast checker.</p>
+      </div>
+      <div class="feature-cell">
+        <div class="num">03</div>
+        <h3>PRACTICE</h3>
+        <p>Real UX challenges — fix broken interfaces and build working color systems.</p>
+      </div>
+    </div>
+    <div class="step-flow reveal">
+      <span class="sf-item">TEST</span><span class="sf-arrow">→</span>
+      <span class="sf-item">CREATE</span><span class="sf-arrow">→</span>
+      <span class="sf-item">MASTER</span>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <section class="final-cta wrap">
+    <h2 class="headline-lg">Color is not decoration.</h2>
+    <p class="body-lg" style="max-width:440px;margin:16px auto 32px;">It's a system. Learn to use it with intention.</p>
+    <button class="btn btn-primary" data-nav="dashboard">START LEARNING →</button>
+  </section>
+  `;
+}
+
+function bindLandingOrb(){
+  const wrap=document.getElementById('orbWrap');
+  const orb=document.getElementById('orb');
+  const split=document.getElementById('orbSplit');
+  if(!wrap) return;
+  let clicked=false;
+  function onMove(e){
+    if(clicked) return;
+    const rect=wrap.getBoundingClientRect();
+    const cx=rect.left+rect.width/2, cy=rect.top+rect.height/2;
+    const clientX = e.touches? e.touches[0].clientX : e.clientX;
+    const clientY = e.touches? e.touches[0].clientY : e.clientY;
+    const dx=clientX-cx, dy=clientY-cy;
+    const dist=Math.min(Math.sqrt(dx*dx+dy*dy),300);
+    const angle=(Math.atan2(dy,dx)*180/Math.PI+360)%360;
+    const sat=clamp(100-dist/3,20,90);
+    orb.style.background=`hsl(${angle},${sat}%,50%)`;
+  }
+  document.addEventListener('mousemove',onMove);
+  wrap.addEventListener('click',()=>{
+    clicked=true;
+    orb.style.background='#000';
+    orb.style.transform='scale(.9)';
+    split.classList.add('show');
+    setTimeout(()=>{
+      orb.style.transform='scale(1)';
+    },250);
+    setTimeout(()=>{
+      split.classList.remove('show');
+      clicked=false;
+    },2400);
+  });
+  wrap.addEventListener('keydown',(e)=>{ if(e.key==='Enter'||e.key===' '){e.preventDefault(); wrap.click();} });
+}
+
+/* ============================================================
+   DASHBOARD
+============================================================ */
+function dashboardView(){
+  const pct=Math.round((state.completedLessons.size/12)*100);
+  const nextId=state.currentLessonHighlight;
+  const nextLesson=LESSONS.find(l=>l.id===nextId)||LESSONS[0];
+  const ringR=40, circ=2*Math.PI*ringR;
+  return `
+  <section class="wrap" style="padding-top:56px;">
+    <div class="dash-hero reveal">
+      <div>
+        <div class="eyebrow" style="margin-bottom:10px;">YOUR COLOR JOURNEY</div>
+        <h1 class="headline-lg">Learn the fundamentals.<br>Then learn how to use them.</h1>
+      </div>
+      <div class="dash-ring" aria-hidden="true">
+        <svg width="96" height="96">
+          <circle cx="48" cy="48" r="${ringR}" fill="none" stroke="var(--border)" stroke-width="6"/>
+          <circle cx="48" cy="48" r="${ringR}" fill="none" stroke="#000" stroke-width="6" stroke-linecap="round"
+            stroke-dasharray="${circ}" stroke-dashoffset="${circ-(circ*pct/100)}"/>
+        </svg>
+        <div class="pct">${pct}%</div>
+      </div>
+    </div>
+
+    <div class="card continue-card reveal" style="margin-bottom:40px;">
+      <div>
+        <div class="continue-meta">COURSE PROGRESS · LESSON ${String(nextId).padStart(2,'0')} / 12</div>
+        <div class="continue-title">${nextLesson.title}</div>
+        <div class="continue-time">${nextLesson.time}</div>
+      </div>
+      <button class="btn btn-primary" data-open-lesson="${nextId}">CONTINUE →</button>
+    </div>
+
+    <div class="grid-2 reveal">
+      <div>
+        <h2 class="headline-md" style="margin-bottom:22px;">YOUR SKILLS</h2>
+        <div class="skills-grid">
+          ${Object.entries(state.skills).map(([k,v])=>`
+            <div class="skill-row">
+              <div class="name">${k}</div>
+              <div class="progress-track"><div class="progress-fill" style="width:${v}%"></div></div>
+              <div class="pct">${v}%</div>
+            </div>`).join('')}
+        </div>
+      </div>
+      <div>
+        <h2 class="headline-md" style="margin-bottom:22px;">COURSE ROADMAP</h2>
+        <div class="card" style="padding:20px;">
+          <div class="body-md" style="margin-bottom:14px;">${state.completedLessons.size} of 12 lessons complete.</div>
+          <button class="btn btn-secondary btn-sm" data-nav="roadmap" style="width:100%;">VIEW FULL ROADMAP</button>
+        </div>
+      </div>
+    </div>
+  </section>`;
+}
+
+/* ============================================================
+   ROADMAP
+============================================================ */
+function roadmapView(){
+  return `
+  <section class="wrap" style="padding-top:56px; padding-bottom:80px;">
+    <div class="eyebrow" style="margin-bottom:10px;">12 LESSONS</div>
+    <h1 class="headline-lg" style="margin-bottom:48px;">Course Roadmap</h1>
+    <div class="timeline">
+      ${LESSONS.map(l=>{
+        const done=state.completedLessons.has(l.id);
+        const current=l.id===state.currentLessonHighlight;
+        const locked=!done && !current && l.id>state.currentLessonHighlight;
+        const cls=done?'done':current?'current':locked?'locked':'';
+        return `<div class="tl-item ${cls}" data-open-lesson="${l.id}" tabindex="0" role="button">
+          <div class="tl-dot">${done?'✓':String(l.id).padStart(2,'0')}</div>
+          <div class="tl-body">
+            <div class="tl-title">${l.title}</div>
+            <div class="tl-desc">${l.desc}</div>
+            <div class="tl-meta">${l.time}${current?' · CONTINUE':done?' · COMPLETE':''}</div>
+          </div>
+        </div>`;
+      }).join('')}
+    </div>
+  </section>`;
+}
+
+/* ============================================================
+   LESSON SHELL
+============================================================ */
+function lessonView(){
+  const lesson=LESSONS.find(l=>l.id===state.lessonId)||LESSONS[0];
+  const step=state.step;
+  return `
+  <div class="lesson-header wrap">
+    <div class="lesson-eyebrow"><span>LESSON ${String(lesson.id).padStart(2,'0')} / 12</span><span>·</span><span>${lesson.time}</span></div>
+    <h1 class="lesson-title">${lesson.title.toUpperCase()}</h1>
+    <p class="lesson-sub">${lesson.desc}</p>
+    <div class="step-nav" aria-hidden="true">
+      ${STEPS.map((s,i)=>`<div class="step-pill ${i<step?'done':i===step?'current':''}"><div class="fill"></div></div>`).join('')}
+    </div>
+    <div class="step-labels">
+      ${STEPS.map((s,i)=>`<span class="${i===step?'current':''}">${s}</span>`).join('')}
+    </div>
+  </div>
+  <div class="lesson-body wrap">
+    <div class="lesson-stage" id="lessonStage">
+      ${lessonStepContent(lesson,step)}
+    </div>
+    <div class="lesson-footer">
+      <button class="btn btn-ghost" id="lessonBack" ${step===0?'disabled':''}>← Back</button>
+      <button class="btn btn-primary" id="lessonNext">${step===STEPS.length-1?'Finish lesson':'Continue →'}</button>
+    </div>
+  </div>`;
+}
+
+function lessonStepContent(lesson,step){
+  if(step===4) return completeStepHtml(lesson);
+  if(step===3) return quizStepHtml(lesson);
+  // step 0,1,2 => Concept, Explore, Practice — custom per lesson
+  return lessonContentByStep(lesson,step);
+}
+
+function completeStepHtml(lesson){
+  const already=state.completedLessons.has(lesson.id);
+  return `
+  <div style="text-align:center; padding:40px 0 10px;">
+    <div class="stage-label" style="justify-content:center; display:flex;">LESSON COMPLETE</div>
+    <h2 class="headline-lg" style="margin-bottom:14px;">Nice work.</h2>
+    <p class="body-lg" style="max-width:420px; margin:0 auto 30px;">You've completed <b style="color:#000">${lesson.title}</b>.</p>
+    <div class="xp-toast" style="font-size:14px; padding:8px 16px;">+50 XP</div>
+    <div style="margin-top:36px; display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
+      ${lesson.id<12?`<button class="btn btn-primary" id="nextLessonBtn">NEXT LESSON →</button>`:`<button class="btn btn-primary" data-nav="certificate">VIEW CERTIFICATE →</button>`}
+      <button class="btn btn-secondary" data-nav="roadmap">BACK TO ROADMAP</button>
+    </div>
+  </div>`;
+}
+
+function quizStepHtml(lesson){
+  const qs=QUESTIONS.filter(q=>q.lesson===lesson.id);
+  if(qs.length===0){
+    return `<div style="text-align:center;padding:60px 0;"><p class="body-lg">No quiz questions for this lesson yet.</p></div>`;
+  }
+  const idx=clamp(state.quizIndex,0,qs.length-1);
+  const q=qs[idx];
+  const answered=state.quizAnswered;
+  const sel=state.quizSelected;
+  return `
+  <div class="quiz-card">
+    <div class="quiz-progress">${idx+1} / ${qs.length}</div>
+    <div class="quiz-q">${q.q}</div>
+    <div class="quiz-options" role="radiogroup">
+      ${q.options.map((opt,i)=>{
+        let cls='quiz-opt';
+        if(answered){
+          if(i===q.correct) cls+=' correct';
+          else if(i===sel) cls+=' incorrect';
+          else cls+=' dim';
+        }
+        const isSwatch = q.type==='visual' && /^[A-Za-z-]+$/.test(opt)===false;
+        return `<button class="${cls}" data-quiz-opt="${i}" ${answered?'disabled':''}>${opt}</button>`;
+      }).join('')}
+    </div>
+    ${answered?`
+      <div class="quiz-feedback ${sel===q.correct?'correct':'incorrect'}">
+        <div class="verdict">${sel===q.correct?'Correct.':'Not quite.'}</div>
+        <div>${q.explain}</div>
+      </div>
+      <div style="text-align:center; margin-top:24px;">
+        <button class="btn btn-primary" id="quizContinue">${idx<qs.length-1?'Continue →':'See results →'}</button>
+      </div>
+    `:''}
+  </div>`;
+}
+
+function lessonContentByStep(lesson,step){
+  const fn=LESSON_RENDERERS[lesson.id];
+  if(fn) return fn(step);
+  return genericLesson(lesson,step);
+}
+
+function genericLesson(lesson,step){
+  if(step===0){
+    return `<div class="stage-label">CONCEPT</div>
+    <p class="prompt-q">${lesson.desc}</p>
+    <div class="explain-block">This lesson explores <b>${lesson.title.toLowerCase()}</b> through hands-on interaction, not definitions.</div>`;
+  }
+  return `<div class="stage-label">${STEPS[step].toUpperCase()}</div><p class="body-lg">Continue to proceed.</p>`;
+}
+
+/* ============================================================
+   LESSON-SPECIFIC RENDERERS
+============================================================ */
+const LESSON_RENDERERS={};
+
+/* ---------- Lesson 1: Why Color Matters ---------- */
+LESSON_RENDERERS[1]=function(step){
+  if(step===0){
+    return `
+    <div class="stage-label">DISCOVER</div>
+    <p class="prompt-q">Can you tell what matters most?</p>
+    <div class="ui-preview" style="--ui-border:#EAEAEA;">
+      <div class="ui-nav"><div class="b">PRODUCT</div><div class="ui-btn" style="background:#000;color:#fff;">Buy now</div></div>
+      <div class="ui-card"><div class="t">Order shipped</div><div class="d">Arriving Thursday</div></div>
+      <div class="ui-card"><div class="t">Payment failed</div><div class="d">Update your card details</div></div>
+      <div class="ui-input">Search products…</div>
+      <div class="ui-badge" style="background:#EAEAEA;color:#000;">In stock</div>
+    </div>
+    <div class="explain-block">Right now, everything looks equally important. That's the problem with a UI that has no signal.</div>`;
+  }
+  if(step===1){
+    const on=state.lessonSubStep>=1;
+    return `
+    <div class="stage-label">UNDERSTAND</div>
+    <p class="prompt-q">${on?'Now the hierarchy is obvious.':'Add color to the same interface.'}</p>
+    <div class="ui-preview" style="--ui-border:${on?'#EAEAEA':'#EAEAEA'};">
+      <div class="ui-nav"><div class="b">PRODUCT</div><div class="ui-btn" style="background:${on?'#2563EB':'#000'};color:#fff;">Buy now</div></div>
+      <div class="ui-card" style="${on?'border-color:#16A34A;background:#F0FDF4;':''}"><div class="t">Order shipped</div><div class="d">Arriving Thursday</div></div>
+      <div class="ui-card" style="${on?'border-color:#DC2626;background:#FEF2F2;':''}"><div class="t">Payment failed</div><div class="d">Update your card details</div></div>
+      <div class="ui-input">Search products…</div>
+      <div class="ui-badge" style="background:${on?'#DCFCE7':'#EAEAEA'};color:${on?'#166534':'#000'};">In stock</div>
+    </div>
+    <div style="text-align:center;margin-top:20px;">
+      <button class="btn btn-secondary btn-sm" id="addColorBtn" ${on?'disabled':''}>${on?'Color added':'ADD COLOR →'}</button>
+    </div>
+    <div class="explain-block">${on?'<b>Color can guide attention.</b> The buy button now pulls focus first. <b>Color can communicate meaning.</b> Green reads as success, red as a problem. <b>Color can create hierarchy</b> — even without changing size or position.':'Click the button above to see what changes.'}</div>`;
+  }
+  if(step===2){
+    return `
+    <div class="stage-label">MEMORY</div>
+    <p class="prompt-q">COLOR = MEANING + ATTENTION + HIERARCHY</p>
+    <div class="term-grid">
+      <div class="term"><div class="t">MEANING</div><div class="d">Color signals what something is — success, error, info.</div></div>
+      <div class="term"><div class="t">ATTENTION</div><div class="d">Color pulls the eye toward what matters most.</div></div>
+      <div class="term"><div class="t">HIERARCHY</div><div class="d">Color helps rank elements by importance.</div></div>
+    </div>`;
+  }
+};
+
+/* ---------- Lesson 2: Color Wheel ---------- */
+function wheelHtml(hue,sat,light,size){
+  return `<div class="wheel" id="wheelEl" style="background:conic-gradient(from 90deg,${Array.from({length:13},(_,i)=>`hsl(${i*30},${sat}%,${light}%) ${i*30}deg`).join(',')})">
+    <div class="wheel-handle" id="wheelHandle"></div>
+  </div>`;
+}
+function positionWheelHandle(){
+  const wheel=document.getElementById('wheelEl');
+  const handle=document.getElementById('wheelHandle');
+  if(!wheel||!handle) return;
+  const size=wheel.clientWidth;
+  const r=size/2-2;
+  const angle=(state.wheelHue-90)*Math.PI/180;
+  const cx=size/2+r*Math.cos(angle);
+  const cy=size/2+r*Math.sin(angle);
+  handle.style.left=cx+'px';
+  handle.style.top=cy+'px';
+}
+LESSON_RENDERERS[2]=function(step){
+  if(step===0){
+    return `<div class="stage-label">DISCOVER</div>
+    <p class="prompt-q">Every color has a place on the wheel.</p>
+    <div class="explain-block">The color wheel maps how hues relate to each other. Colors near each other feel harmonious. Colors across from each other create contrast.</div>
+    <div class="term-grid">
+      <div class="term"><div class="t">PRIMARY</div><div class="d">Red, blue, yellow — the base colors.</div></div>
+      <div class="term"><div class="t">SECONDARY</div><div class="d">Made by mixing two primaries.</div></div>
+      <div class="term"><div class="t">TERTIARY</div><div class="d">Made by mixing a primary and secondary.</div></div>
+    </div>`;
+  }
+  if(step===1){
+    const hex=hslToHex(state.wheelHue,state.wheelSat,state.wheelLight);
+    const [r,g,b]=hslToRgb(state.wheelHue,state.wheelSat,state.wheelLight);
+    return `<div class="stage-label">EXPLORE</div>
+    <p class="prompt-q">Drag the wheel to select a hue.</p>
+    <div class="wheel-area">
+      <div class="wheel-outer">${wheelHtml(state.wheelHue,state.wheelSat,state.wheelLight)}</div>
+      <div class="wheel-info">
+        <div class="color-name" id="colorName" style="color:${hex}">${nameForHue(state.wheelHue)}</div>
+        <div class="readout">
+          <div class="box"><div class="k">Hue</div><div class="v" id="wHue">${state.wheelHue}°</div></div>
+          <div class="box"><div class="k">Hex</div><div class="v" id="wHex">${hex}</div></div>
+          <div class="box"><div class="k">RGB</div><div class="v" id="wRgb">${r}, ${g}, ${b}</div></div>
+          <div class="box"><div class="k">HSL</div><div class="v" id="wHsl">${state.wheelHue}, ${state.wheelSat}%, ${state.wheelLight}%</div></div>
+        </div>
+        <div style="margin-top:20px;">
+          <div class="field-label" style="margin-bottom:10px;">JUMP TO</div>
+          <div class="seg">
+            <button class="seg-btn" data-hue="15">Warm · Red</button>
+            <button class="seg-btn" data-hue="45">Warm · Orange</button>
+            <button class="seg-btn" data-hue="55">Primary · Yellow</button>
+            <button class="seg-btn" data-hue="150">Secondary · Green</button>
+            <button class="seg-btn" data-hue="220">Cool · Blue</button>
+            <button class="seg-btn" data-hue="280">Tertiary · Violet</button>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  }
+  if(step===2){
+    const hex=hslToHex(state.wheelHue,state.wheelSat,state.wheelLight);
+    return `<div class="stage-label">PRACTICE</div>
+    <p class="prompt-q">Pick a color, then apply it to a button.</p>
+    <div class="wheel-area">
+      <div class="wheel-outer">${wheelHtml(state.wheelHue,state.wheelSat,state.wheelLight)}</div>
+      <div class="wheel-info">
+        <div class="ui-preview" style="margin-bottom:16px;">
+          <div class="ui-nav"><div class="b">APP</div><div></div></div>
+          <button class="ui-btn" style="background:${hex};color:#fff;">Primary action</button>
+        </div>
+        <p class="body-md">Notice how the same button reads differently depending on hue — some feel urgent, some feel calm.</p>
+      </div>
+    </div>`;
+  }
+};
+
+/* ---------- Lesson 3: HSL Lab ---------- */
+LESSON_RENDERERS[3]=function(step){
+  const hex=hslToHex(state.labH,state.labS,state.labL);
+  const [r,g,b]=hslToRgb(state.labH,state.labS,state.labL);
+  if(step===0){
+    return `<div class="stage-label">CONCEPT</div>
+    <p class="prompt-q">Three numbers describe every color.</p>
+    <div class="term-grid">
+      <div class="term"><div class="t">HUE</div><div class="d">"What color is it?" — position on the wheel, 0–360°.</div></div>
+      <div class="term"><div class="t">SATURATION</div><div class="d">"How intense is it?" — 0% is gray, 100% is vivid.</div></div>
+      <div class="term"><div class="t">LIGHTNESS</div><div class="d">"How light or dark is it?" — 0% is black, 100% is white.</div></div>
+    </div>`;
+  }
+  return `<div class="stage-label">${step===1?'EXPLORE':'EXPERIMENT'}</div>
+  <p class="prompt-q">${step===1?'Move the sliders. Watch the color change.':'Try building a tint, a shade, and a tone.'}</p>
+  <div class="lab-grid">
+    <div class="lab-preview" id="labPreview" style="background:${hex}"></div>
+    <div>
+      <div class="slider-row">
+        <div class="field-label"><span>HUE</span><span class="val" id="labHVal">${state.labH}°</span></div>
+        <input type="range" min="0" max="360" value="${state.labH}" id="labH">
+      </div>
+      <div class="slider-row">
+        <div class="field-label"><span>SATURATION</span><span class="val" id="labSVal">${state.labS}%</span></div>
+        <input type="range" min="0" max="100" value="${state.labS}" id="labS">
+      </div>
+      <div class="slider-row">
+        <div class="field-label"><span>LIGHTNESS</span><span class="val" id="labLVal">${state.labL}%</span></div>
+        <input type="range" min="0" max="100" value="${state.labL}" id="labL">
+      </div>
+      <div class="readout">
+        <div class="box"><div class="k">Hex</div><div class="v" id="labHex">${hex}</div></div>
+        <div class="box"><div class="k">RGB</div><div class="v" id="labRgb">${r}, ${g}, ${b}</div></div>
+        <div class="box"><div class="k">HSL</div><div class="v" id="labHsl">${state.labH}, ${state.labS}%, ${state.labL}%</div></div>
+      </div>
+      ${step===2?`
+      <div class="seg" style="margin-top:20px;">
+        <button class="seg-btn" data-lab-preset="tint">TINT (+white)</button>
+        <button class="seg-btn" data-lab-preset="shade">SHADE (+black)</button>
+        <button class="seg-btn" data-lab-preset="tone">TONE (+gray)</button>
+      </div>`:''}
+    </div>
+  </div>`;
+};
+
+/* ---------- Lesson 4: Harmony ---------- */
+const HARMONY_TYPES=[['mono','Monochromatic'],['analogous','Analogous'],['complementary','Complementary'],['splitcomp','Split-Complementary'],['triadic','Triadic'],['tetradic','Tetradic']];
+LESSON_RENDERERS[4]=function(step){
+  if(step===0){
+    return `<div class="stage-label">CONCEPT</div>
+    <p class="prompt-q">What colors could work with blue?</p>
+    <div class="explain-block">Color harmony is about relationships. Some combinations feel calm and unified. Others feel bold and energetic — it depends on how far apart the hues sit.</div>`;
+  }
+  const pal=harmonyPalette(state.harmonyBase,state.harmonyType);
+  return `<div class="stage-label">${step===1?'EXPLORE':'PRACTICE'}</div>
+  <p class="prompt-q">Choose a harmony type.</p>
+  <div class="seg" style="margin-bottom:6px;">
+    ${HARMONY_TYPES.map(([k,n])=>`<button class="seg-btn ${state.harmonyType===k?'active':''}" data-harmony="${k}">${n}</button>`).join('')}
+  </div>
+  <div style="margin-top:18px;">
+    <input type="color" id="harmonyBaseInput" value="${state.harmonyBase}" style="width:48px;height:32px;border:none;border-radius:6px;cursor:pointer;vertical-align:middle;">
+    <span class="body-md" style="margin-left:10px;">Base color</span>
+  </div>
+  <div class="harmony-palette">
+    ${pal.map(c=>`<div class="harmony-sw" style="background:${c}"><span class="lbl">${c}</span></div>`).join('')}
+  </div>
+  ${step===2?`
+  <div class="stage-label" style="margin-top:24px;">LIVE UI</div>
+  <div class="ui-preview" style="--ui-border:${pal[0]}22;">
+    <div class="ui-nav" style="border-color:${pal[3]||'#EAEAEA'}"><div class="b">APP</div><button class="ui-btn" style="background:${pal[1]||pal[0]};color:#fff;">Get started</button></div>
+    <div class="ui-card" style="border-color:${pal[3]||'#EAEAEA'};background:${pal[2]||'#fff'}22;"><div class="t">Featured</div><div class="d">Palette applied automatically</div></div>
+    <span class="ui-badge" style="background:${pal[0]}22;color:${pal[0]};">Accent</span>
+  </div>`:`<p class="body-md">Palette → then it becomes a real interface.</p>`}
+  `;
+};
+
+/* ---------- Lesson 5: Psychology ---------- */
+const INDUSTRY_PALETTES={
+  Banking:{color:'#2563EB',assoc:['Trust','Stability','Security']},
+  Fitness:{color:'#F97316',assoc:['Energy','Motivation','Intensity']},
+  Meditation:{color:'#4F7A6B',assoc:['Calm','Balance','Focus']},
+  Luxury:{color:'#111111',assoc:['Exclusivity','Precision','Confidence']},
+  Food:{color:'#DC2626',assoc:['Appetite','Warmth','Urgency']},
+};
+LESSON_RENDERERS[5]=function(step){
+  if(step===0){
+    return `<div class="stage-label">DISCOVER</div>
+    <p class="prompt-q">What changes when you introduce blue?</p>
+    <div class="ui-preview">
+      <div class="ui-nav"><div class="b">BANKAPP</div><div class="ui-btn" style="background:${state.lessonSubStep?'#2563EB':'#000'};color:#fff;">Transfer</div></div>
+      <div class="ui-card"><div class="t">Balance</div><div class="d">$12,480.00</div></div>
+    </div>
+    <button class="btn btn-secondary btn-sm" id="psychToggle" style="margin-top:16px;">${state.lessonSubStep?'REMOVE BLUE':'INTRODUCE BLUE →'}</button>
+    <div class="explain-block">${state.lessonSubStep?'Blue often reads as trust, calm, technology, stability — but that reading depends entirely on context, culture, brand and surrounding design. It is never a universal rule.':'Toggle color on to see the shift.'}</div>`;
+  }
+  if(step===1){
+    const items=Object.entries(INDUSTRY_PALETTES);
+    const active=state.projectIndustryPsych||'Banking';
+    const p=INDUSTRY_PALETTES[active];
+    return `<div class="stage-label">EXPLORE</div>
+    <p class="prompt-q">Choose a palette for each industry.</p>
+    <div class="seg" style="margin-bottom:20px;">
+      ${items.map(([k])=>`<button class="seg-btn ${active===k?'active':''}" data-industry="${k}">${k}</button>`).join('')}
+    </div>
+    <div class="ui-preview">
+      <div class="ui-nav"><div class="b">${active.toUpperCase()}</div><button class="ui-btn" style="background:${p.color};color:#fff;">Primary action</button></div>
+      <div style="display:flex;gap:8px;margin-top:6px;">${p.assoc.map(a=>`<span class="ui-badge" style="background:${p.color}22;color:${p.color};">${a}</span>`).join('')}</div>
+    </div>
+    <div class="explain-block">Color associations depend on <b>context, culture, brand and surrounding design</b> — never treat them as universal rules.</div>`;
+  }
+  return `<div class="stage-label">PRACTICE</div>
+  <p class="prompt-q">Explain your reasoning.</p>
+  <div class="term-grid">
+    ${Object.entries(INDUSTRY_PALETTES).map(([k,p])=>`<div class="term"><div style="width:100%;height:6px;border-radius:99px;background:${p.color};margin-bottom:8px;"></div><div class="t">${k.toUpperCase()}</div><div class="d">${p.assoc.join(' · ')}</div></div>`).join('')}
+  </div>`;
+};
+
+/* ---------- Lesson 6: Build a UI Color System ---------- */
+const SYS_ROLES=[['primary','Primary'],['secondary','Secondary'],['accent','Accent'],['background','Background'],['text','Text'],['surface','Surface']];
+LESSON_RENDERERS[6]=function(step){
+  if(step===0){
+    return `<div class="stage-label">CONCEPT</div>
+    <p class="prompt-q">Colors need jobs.</p>
+    <div class="explain-block">A color system isn't a palette of favorites — every color is assigned a role: primary, accent, background, text, and semantic colors like success or error. Give a color a job, and it becomes a system.</div>`;
+  }
+  const c=state.sysColors;
+  return `<div class="stage-label">${step===1?'EXPLORE':'PRACTICE'}</div>
+  <p class="prompt-q">Assign a color to each role.</p>
+  <div class="lab-grid">
+    <div>
+      ${SYS_ROLES.map(([k,n])=>`
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+          <input type="color" data-sys-color="${k}" value="${c[k]}" style="width:36px;height:36px;border:none;border-radius:8px;cursor:pointer;">
+          <div>
+            <div style="font-size:12.5px;font-weight:700;">${n}</div>
+            <div style="font-size:11px;color:var(--text-muted);font-family:monospace;">${c[k]}</div>
+          </div>
+        </div>`).join('')}
+    </div>
+    <div class="ui-preview" style="background:${c.background}; --ui-border:${c.text}22;">
+      <div class="ui-nav" style="border-color:${c.text}22;"><div class="b" style="color:${c.text}">SYSTEM</div><button class="ui-btn" style="background:${c.primary};color:${c.background};">Primary</button></div>
+      <div class="ui-card" style="border-color:${c.text}22;background:${c.surface};"><div class="t" style="color:${c.text}">Live component</div><div class="d">Colors update instantly</div></div>
+      <button class="ui-btn" style="background:transparent;border:1.5px solid ${c.secondary};color:${c.text};margin-right:8px;">Secondary</button>
+      <span class="ui-badge" style="background:${c.accent}22;color:${c.accent};">Accent badge</span>
+      <div class="ui-alert" style="background:#DCFCE7;color:#166534;margin-top:12px;">✓ Success alert</div>
+      <div class="ui-alert" style="background:#FEE2E2;color:#991B1B;margin-top:8px;">✕ Error alert</div>
+      <div class="ui-input" style="color:${c.text}66;border-color:${c.text}22;margin-top:8px;">Input field…</div>
+    </div>
+  </div>`;
+};
+
+/* ---------- Lesson 7: Accessibility & Contrast ---------- */
+LESSON_RENDERERS[7]=function(step){
+  if(step===0){
+    return `<div class="stage-label">DISCOVER</div>
+    <p class="prompt-q">Can you read this?</p>
+    <div class="contrast-demo" style="background:#CCCCCC;color:#DDDDDD;">
+      <div class="big">The quick brown fox jumps.</div>
+    </div>
+    <div class="explain-block">Poor contrast makes text unreadable for many users — not just those with low vision. This is one of the most common accessibility failures in real products.</div>`;
+  }
+  if(step===1){
+    const ratio=contrastRatio(state.contrastText,state.contrastBg);
+    const aa=ratio>=4.5, aaLarge=ratio>=3, aaa=ratio>=7;
+    return `<div class="stage-label">EXPLORE</div>
+    <p class="prompt-q">Adjust the colors. Watch the ratio.</p>
+    <div class="contrast-demo" id="contrastDemo" style="background:${state.contrastBg};color:${state.contrastText}">
+      <div class="big">The quick brown fox jumps.</div>
+    </div>
+    <div style="display:flex; gap:24px; margin-top:20px; flex-wrap:wrap;">
+      <div><span class="field-label" style="display:block;">TEXT</span><input type="color" id="contrastTextInput" value="${state.contrastText}" style="width:48px;height:32px;border:none;border-radius:6px;"></div>
+      <div><span class="field-label" style="display:block;">BACKGROUND</span><input type="color" id="contrastBgInput" value="${state.contrastBg}" style="width:48px;height:32px;border:none;border-radius:6px;"></div>
+    </div>
+    <div class="ratio-badge ${aa?'pass':'fail'}" id="ratioBadge">${ratio.toFixed(1)} : 1 — ${aa?'PASS':'FAIL'}</div>
+    <div class="pass-grid">
+      <div class="pass-item ${aa?'ok':'no'}"><div>Normal text (AA)</div><div class="lv">${aa?'PASS':'FAIL'}</div></div>
+      <div class="pass-item ${aaLarge?'ok':'no'}"><div>Large text (AA)</div><div class="lv">${aaLarge?'PASS':'FAIL'}</div></div>
+      <div class="pass-item ${aaa?'ok':'no'}"><div>Normal text (AAA)</div><div class="lv">${aaa?'PASS':'FAIL'}</div></div>
+    </div>`;
+  }
+  const types=[['normal','Normal'],['protanopia','Protanopia'],['deuteranopia','Deuteranopia'],['tritanopia','Tritanopia']];
+  const simColor=simulateBlind('#DC2626',state.cbType);
+  const simColor2=simulateBlind('#16A34A',state.cbType);
+  return `<div class="stage-label">PRACTICE — COLOR BLINDNESS SIMULATOR</div>
+  <p class="prompt-q">Does the interface still make sense?</p>
+  <div class="seg" style="margin-bottom:20px;">
+    ${types.map(([k,n])=>`<button class="seg-btn ${state.cbType===k?'active':''}" data-cb="${k}">${n}</button>`).join('')}
+  </div>
+  <div class="ui-preview">
+    <div class="ui-alert" style="background:${simColor}22;color:${simColor};margin-bottom:8px;">● Error — color only</div>
+    <div class="ui-alert" style="background:${simColor}22;color:${simColor};">✕ Error — icon + text + color</div>
+    <div class="ui-alert" style="background:${simColor2}22;color:${simColor2};margin-top:8px;">✓ Success — icon + text + color</div>
+  </div>
+  <div class="explain-block">Never rely on color alone. <b>Bad:</b> red = error. <b>Better:</b> icon + text + color together.</div>`;
+};
+
+/* ---------- Lesson 8: Visual Hierarchy ---------- */
+LESSON_RENDERERS[8]=function(step){
+  if(step===0){
+    return `<div class="stage-label">DISCOVER</div>
+    <p class="prompt-q">What should the user notice first?</p>
+    <div class="ui-preview">
+      <div class="ui-nav"><div class="b">DASHBOARD</div><div class="ui-btn" style="background:#EAEAEA;color:#000;">Save</div></div>
+      <div class="ui-card"><div class="t">Card one</div><div class="d">Same weight as everything else</div></div>
+      <div class="ui-card"><div class="t">Card two</div><div class="d">Nothing stands out</div></div>
+    </div>
+    <div class="explain-block">Everything here carries equal visual weight. Without hierarchy, the eye has nowhere to land first.</div>`;
+  }
+  const c=state.hierarchyColor, sz=state.hierarchySize, ct=state.hierarchyContrast;
+  const btnBg=`hsl(220,${c}%,${45-ct*0.15}%)`;
+  return `<div class="stage-label">${step===1?'EXPLORE':'PRACTICE'}</div>
+  <p class="prompt-q">Manipulate color, size, contrast and spacing.</p>
+  <div class="lab-grid">
+    <div>
+      <div class="slider-row"><div class="field-label"><span>COLOR INTENSITY</span><span class="val">${c}%</span></div><input type="range" min="0" max="100" value="${c}" id="hColor"></div>
+      <div class="slider-row"><div class="field-label"><span>SIZE</span><span class="val">${sz}%</span></div><input type="range" min="0" max="100" value="${sz}" id="hSize"></div>
+      <div class="slider-row"><div class="field-label"><span>CONTRAST</span><span class="val">${ct}%</span></div><input type="range" min="0" max="100" value="${ct}" id="hContrast"></div>
+    </div>
+    <div class="ui-preview">
+      <div class="ui-nav"><div class="b">DASHBOARD</div>
+        <button class="ui-btn" style="background:${btnBg};color:#fff; font-size:${12+sz*0.06}px; padding:${9+sz*0.08}px ${18+sz*0.15}px;">Primary action</button>
+      </div>
+      <div class="ui-card" style="opacity:${0.55+ (100-c)/300};"><div class="t">Secondary information</div><div class="d">Lower visual weight</div></div>
+      <div class="ui-card" style="opacity:${0.4+(100-c)/400};"><div class="t">Tertiary information</div><div class="d">Even lower weight</div></div>
+    </div>
+  </div>
+  <div class="explain-block">Color is <b>one</b> tool for hierarchy — not the only one. Size, contrast and spacing matter just as much.</div>`;
+};
+
+/* ---------- Lesson 9: UI States ---------- */
+const UI_STATES=['default','hover','focus','active','loading','success','error','disabled'];
+LESSON_RENDERERS[9]=function(step){
+  const s=state.statesColors;
+  if(step===0){
+    return `<div class="stage-label">CONCEPT</div>
+    <p class="prompt-q">Can a user understand what is happening?</p>
+    <div class="explain-block">Every interactive element moves through states: default, hover, focus, active, loading, success, error, disabled. Color helps signal which one is active.</div>`;
+  }
+  const active=state.lessonSubStep? UI_STATES[state.lessonSubStep] : 'default';
+  return `<div class="stage-label">${step===1?'EXPLORE':'PRACTICE'}</div>
+  <p class="prompt-q">Step through the state machine.</p>
+  <div class="seg" style="margin-bottom:24px;">
+    ${UI_STATES.map((st,i)=>`<button class="seg-btn ${active===st?'active':''}" data-state-idx="${i}">${st}</button>`).join('')}
+  </div>
+  <div style="display:flex; justify-content:center; padding:40px 0;">
+    <button class="ui-btn" style="background:${s[active]};color:#fff; font-size:14px; padding:14px 28px; opacity:${active==='disabled'?0.5:1};">
+      ${active==='loading'?'Loading…':active==='success'?'✓ Done':active==='error'?'✕ Try again':'Continue'}
+    </button>
+  </div>
+  ${step===2?`<div style="text-align:center;"><input type="color" id="stateColorInput" value="${s[active]}" style="width:48px;height:32px;border:none;border-radius:6px;"> <span class="body-md">Edit "${active}" color</span></div>`:''}
+  `;
+};
+
+/* ---------- Lesson 10: Real-World Analysis ---------- */
+const BRAND_STUDIES=[
+  {name:'Search Engine',primary:'#2563EB',accent:'#EA4335',neutral:'#F1F3F4',cta:'Sign in',state:'Trusted blue link color, minimal chrome.'},
+  {name:'Music Streaming',primary:'#16A34A',accent:'#111111',neutral:'#F5F5F5',cta:'Play',state:'Vivid green cuts through a mostly dark interface.'},
+  {name:'Ride Share',primary:'#111111',accent:'#276EF1',neutral:'#F6F6F6',cta:'Request ride',state:'Black-forward UI, blue reserved for map + confirmation.'},
+  {name:'Food Delivery',primary:'#DC2626',accent:'#F59E0B',neutral:'#FFF7ED',cta:'Order now',state:'Warm reds and oranges signal appetite and urgency.'},
+];
+LESSON_RENDERERS[10]=function(step){
+  if(step===0){
+    return `<div class="stage-label">DISCOVER</div>
+    <p class="prompt-q">Why do you think this color was used here?</p>
+    <div class="explain-block">These are simplified educational recreations — not exact brand assets — used to study color decisions in real products.</div>`;
+  }
+  return `<div class="stage-label">${step===1?'EXPLORE':'PRACTICE'}</div>
+  <p class="prompt-q">Study each system: primary, accent, neutrals, CTA.</p>
+  <div class="term-grid" style="grid-template-columns:repeat(2,1fr);">
+    ${BRAND_STUDIES.map(b=>`
+      <div class="term" style="padding:18px;">
+        <div style="display:flex;gap:6px;margin-bottom:10px;">
+          <div class="swatch" style="width:22px;height:22px;background:${b.primary}"></div>
+          <div class="swatch" style="width:22px;height:22px;background:${b.accent}"></div>
+          <div class="swatch" style="width:22px;height:22px;background:${b.neutral}"></div>
+        </div>
+        <div class="t">${b.name.toUpperCase()}</div>
+        <div class="d" style="margin-top:6px;">${b.state}</div>
+        <div style="margin-top:10px;"><span class="ui-badge" style="background:${b.primary}22;color:${b.primary};">${b.cta}</span></div>
+      </div>`).join('')}
+  </div>`;
+};
+
+/* ---------- Lesson 11: Build Your Palette ---------- */
+const PROJECT_TYPES=['Banking','Travel','Healthcare','Education','Fitness','Food','SaaS'];
+LESSON_RENDERERS[11]=function(step){
+  if(step===0){
+    return `<div class="stage-label">CONCEPT</div>
+    <p class="prompt-q">Apply everything to a real project.</p>
+    <div class="explain-block">Choose a project type, build a full color system, then see it applied to a live interface — the same workflow you'll use professionally.</div>`;
+  }
+  const industry=state.projectIndustry;
+  const c=state.projectColors;
+  return `<div class="stage-label">${step===1?'EXPLORE':'PRACTICE'}</div>
+  <p class="prompt-q">Choose a project, then build the system.</p>
+  <div class="seg" style="margin-bottom:20px;">
+    ${PROJECT_TYPES.map(p=>`<button class="seg-btn ${industry===p?'active':''}" data-project="${p}">${p}</button>`).join('')}
+  </div>
+  <div class="lab-grid">
+    <div>
+      ${Object.entries(c).map(([k,v])=>`
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+          <input type="color" data-proj-color="${k}" value="${v}" style="width:32px;height:32px;border:none;border-radius:8px;">
+          <div style="font-size:12.5px;font-weight:600;text-transform:capitalize;">${k}</div>
+        </div>`).join('')}
+    </div>
+    <div class="ui-preview">
+      <div class="ui-nav"><div class="b">${industry.toUpperCase()}</div><button class="ui-btn" style="background:${c.primary};color:#fff;">Get started</button></div>
+      <div class="ui-card"><div class="t">Home</div><div class="d">Live UI reflects your system</div></div>
+      <button class="ui-btn" style="background:${c.accent};color:#fff;margin-right:8px;">Primary action</button>
+      <span class="ui-badge" style="background:${c.success}22;color:${c.success};">Success</span>
+      <span class="ui-badge" style="background:${c.error}22;color:${c.error};margin-left:6px;">Error</span>
+    </div>
+  </div>`;
+};
+
+/* ---------- Lesson 12: Final Challenge ---------- */
+const CHALLENGE_ISSUES=[
+  {id:'accents',label:'Reduce accent colors'},
+  {id:'contrast',label:'Improve contrast'},
+  {id:'cta',label:'Fix CTA color'},
+  {id:'semantic',label:'Create semantic roles'},
+  {id:'hierarchy',label:'Improve hierarchy'},
+  {id:'coloronly',label:'Add non-color indicators'},
+];
+LESSON_RENDERERS[12]=function(step){
+  const fixed=state.challengeFixed;
+  if(step===0){
+    return `<div class="stage-label">DISCOVER</div>
+    <p class="prompt-q">What's wrong with this interface?</p>
+    <div class="ui-preview">
+      <div class="ui-nav"><div class="b" style="color:#F59E0B;">SHOP</div><button class="ui-btn" style="background:#EC4899;color:#fff;">Buy</button></div>
+      <div class="ui-card" style="border-color:#22D3EE;"><div class="t" style="color:#A855F7;">Sale</div><div class="d" style="color:#FDE047;">50% off everything today</div></div>
+      <button class="ui-btn" style="background:#84CC16;color:#fff;margin-right:6px;">Filter</button>
+      <button class="ui-btn" style="background:#F97316;color:#fff;margin-right:6px;">Sort</button>
+      <span style="color:#DC2626;font-size:12px;">● Error</span>
+    </div>
+    <div class="explain-block">Six unrelated accent colors, weak contrast, and an error shown with color alone.</div>`;
+  }
+  return `<div class="stage-label">${step===1?'IDENTIFY':'REDESIGN'}</div>
+  <p class="prompt-q">Select what you'd fix, then compare.</p>
+  <div class="term-grid">
+    ${CHALLENGE_ISSUES.map(i=>`<button class="term" data-fix="${i.id}" style="cursor:pointer; text-align:left; ${fixed.has(i.id)?'border-color:#000;background:var(--bg-soft);':''}">
+      <div class="t">${fixed.has(i.id)?'✓ ':''}${i.label.toUpperCase()}</div>
+    </button>`).join('')}
+  </div>
+  <div style="display:flex; gap:20px; margin-top:28px; flex-wrap:wrap;">
+    <div style="flex:1; min-width:260px;">
+      <div class="stage-label">BEFORE</div>
+      <div class="ui-preview">
+        <div class="ui-nav"><div class="b" style="color:#F59E0B;">SHOP</div><button class="ui-btn" style="background:#EC4899;color:#fff;">Buy</button></div>
+        <button class="ui-btn" style="background:#84CC16;color:#fff;margin-right:6px;">Filter</button>
+        <button class="ui-btn" style="background:#F97316;color:#fff;">Sort</button>
+      </div>
+    </div>
+    <div style="flex:1; min-width:260px;">
+      <div class="stage-label">YOUR VERSION</div>
+      <div class="ui-preview">
+        <div class="ui-nav"><div class="b">SHOP</div><button class="ui-btn" style="background:#000;color:#fff;">Buy</button></div>
+        <button class="ui-btn" style="background:transparent;border:1px solid var(--border-strong);color:#000;margin-right:6px;">Filter</button>
+        <button class="ui-btn" style="background:transparent;border:1px solid var(--border-strong);color:#000;">Sort</button>
+        ${fixed.has('coloronly')?'<div class="ui-alert" style="background:#FEF2F2;color:#991B1B;margin-top:8px;">✕ Error — payment declined</div>':''}
+      </div>
+    </div>
+  </div>
+  <div style="text-align:center;margin-top:20px;">
+    <span class="chip">DESIGN SCORE: ${Math.round((fixed.size/6)*100)} / 100</span>
+  </div>`;
+};
+
+/* ============================================================
+   LESSON EVENT BINDING
+============================================================ */
+function bindLessonEvents(lesson,step){
+  document.getElementById('lessonBack')?.addEventListener('click',()=>{
+    state.step=Math.max(0,state.step-1); state.lessonSubStep=0; render();
+  });
+  document.getElementById('lessonNext')?.addEventListener('click',()=>{
+    if(state.step<STEPS.length-1){
+      if(state.step===2){ state.quizIndex=0; state.quizScore=0; state.quizAnswered=false; state.quizSelected=null; }
+      state.step++; state.lessonSubStep=0; render();
+    } else {
+      if(!state.completedLessons.has(lesson.id)){
+        state.completedLessons.add(lesson.id);
+        addXP(50);
+        if(lesson.id===state.currentLessonHighlight && lesson.id<12) state.currentLessonHighlight=lesson.id+1;
+      }
+      render();
+    }
+  });
+  document.getElementById('nextLessonBtn')?.addEventListener('click',()=>{
+    openLesson(lesson.id+1);
+  });
+
+  // orb hero not relevant here
+  // lesson 1
+  document.getElementById('addColorBtn')?.addEventListener('click',()=>{ state.lessonSubStep=1; render(); });
+  document.getElementById('psychToggle')?.addEventListener('click',()=>{ state.lessonSubStep=state.lessonSubStep?0:1; render(); });
+  document.querySelectorAll('[data-industry]').forEach(b=>b.addEventListener('click',()=>{ state.projectIndustryPsych=b.getAttribute('data-industry'); render(); }));
+
+  // lesson 2 wheel
+  const wheelOuter=document.querySelector('.wheel-outer');
+  if(wheelOuter){
+    positionWheelHandle();
+    let dragging=false;
+    function setFromEvent(clientX,clientY){
+      const wheel=document.getElementById('wheelEl');
+      const rect=wheel.getBoundingClientRect();
+      const cx=rect.left+rect.width/2, cy=rect.top+rect.height/2;
+      const angle=(Math.atan2(clientY-cy,clientX-cx)*180/Math.PI+90+360)%360;
+      state.wheelHue=Math.round(angle);
+      updateWheelReadout();
+      positionWheelHandle();
+    }
+    const wheel=document.getElementById('wheelEl');
+    wheel.addEventListener('pointerdown',e=>{dragging=true; setFromEvent(e.clientX,e.clientY);});
+    window.addEventListener('pointermove',e=>{if(dragging) setFromEvent(e.clientX,e.clientY);});
+    window.addEventListener('pointerup',()=>dragging=false);
+    wheel.setAttribute('tabindex','0');
+    wheel.addEventListener('keydown',e=>{
+      if(e.key==='ArrowRight'){state.wheelHue=(state.wheelHue+5)%360; updateWheelReadout(); positionWheelHandle();}
+      if(e.key==='ArrowLeft'){state.wheelHue=(state.wheelHue-5+360)%360; updateWheelReadout(); positionWheelHandle();}
+    });
+  }
+  document.querySelectorAll('[data-hue]').forEach(b=>b.addEventListener('click',()=>{
+    state.wheelHue=parseInt(b.getAttribute('data-hue')); render();
+  }));
+
+  // lesson 3 lab
+  ['labH','labS','labL'].forEach(id=>{
+    document.getElementById(id)?.addEventListener('input',e=>{
+      const key=id.replace('lab','').toLowerCase()==='h'?'labH':id==='labS'?'labS':'labL';
+      state[key]=parseInt(e.target.value);
+      updateLabPreview();
+    });
+  });
+  document.querySelectorAll('[data-lab-preset]').forEach(b=>b.addEventListener('click',()=>{
+    const p=b.getAttribute('data-lab-preset');
+    if(p==='tint') state.labL=Math.min(state.labL+25,95);
+    if(p==='shade') state.labL=Math.max(state.labL-25,5);
+    if(p==='tone') state.labS=Math.max(state.labS-30,5);
+    render();
+  }));
+
+  // lesson 4 harmony
+  document.querySelectorAll('[data-harmony]').forEach(b=>b.addEventListener('click',()=>{
+    state.harmonyType=b.getAttribute('data-harmony'); render();
+  }));
+  document.getElementById('harmonyBaseInput')?.addEventListener('input',e=>{
+    state.harmonyBase=e.target.value.toUpperCase(); render();
+  });
+
+  // lesson 6 system
+  document.querySelectorAll('[data-sys-color]').forEach(inp=>inp.addEventListener('input',e=>{
+    state.sysColors[inp.getAttribute('data-sys-color')]=e.target.value; render();
+  }));
+
+  // lesson 7 contrast
+  document.getElementById('contrastTextInput')?.addEventListener('input',e=>{ state.contrastText=e.target.value; updateContrast(); });
+  document.getElementById('contrastBgInput')?.addEventListener('input',e=>{ state.contrastBg=e.target.value; updateContrast(); });
+  document.querySelectorAll('[data-cb]').forEach(b=>b.addEventListener('click',()=>{ state.cbType=b.getAttribute('data-cb'); render(); }));
+
+  // lesson 8 hierarchy
+  document.getElementById('hColor')?.addEventListener('input',e=>{ state.hierarchyColor=parseInt(e.target.value); render(); });
+  document.getElementById('hSize')?.addEventListener('input',e=>{ state.hierarchySize=parseInt(e.target.value); render(); });
+  document.getElementById('hContrast')?.addEventListener('input',e=>{ state.hierarchyContrast=parseInt(e.target.value); render(); });
+
+  // lesson 9 states
+  document.querySelectorAll('[data-state-idx]').forEach(b=>b.addEventListener('click',()=>{
+    state.lessonSubStep=parseInt(b.getAttribute('data-state-idx')); render();
+  }));
+  document.getElementById('stateColorInput')?.addEventListener('input',e=>{
+    const active=UI_STATES[state.lessonSubStep||0];
+    state.statesColors[active]=e.target.value; render();
+  });
+
+  // lesson 11 project
+  document.querySelectorAll('[data-project]').forEach(b=>b.addEventListener('click',()=>{ state.projectIndustry=b.getAttribute('data-project'); render(); }));
+  document.querySelectorAll('[data-proj-color]').forEach(inp=>inp.addEventListener('input',e=>{
+    state.projectColors[inp.getAttribute('data-proj-color')]=e.target.value; render();
+  }));
+
+  // lesson 12 challenge
+  document.querySelectorAll('[data-fix]').forEach(b=>b.addEventListener('click',()=>{
+    const id=b.getAttribute('data-fix');
+    if(state.challengeFixed.has(id)) state.challengeFixed.delete(id); else state.challengeFixed.add(id);
+    render();
+  }));
+
+  // quiz
+  document.querySelectorAll('[data-quiz-opt]').forEach(b=>b.addEventListener('click',()=>{
+    const qs=QUESTIONS.filter(q=>q.lesson===lesson.id);
+    const q=qs[state.quizIndex];
+    const i=parseInt(b.getAttribute('data-quiz-opt'));
+    state.quizAnswered=true; state.quizSelected=i;
+    if(i===q.correct){ state.quizScore++; addXP(q.xp); } 
+    render();
+  }));
+  document.getElementById('quizContinue')?.addEventListener('click',()=>{
+    const qs=QUESTIONS.filter(q=>q.lesson===lesson.id);
+    if(state.quizIndex<qs.length-1){
+      state.quizIndex++; state.quizAnswered=false; state.quizSelected=null; render();
+    } else {
+      state.step=4; render();
+    }
+  });
+}
+function updateWheelReadout(){
+  const hex=hslToHex(state.wheelHue,state.wheelSat,state.wheelLight);
+  const [r,g,b]=hslToRgb(state.wheelHue,state.wheelSat,state.wheelLight);
+  const nameEl=document.getElementById('colorName');
+  if(nameEl){ nameEl.textContent=nameForHue(state.wheelHue); nameEl.style.color=hex; }
+  const hueEl=document.getElementById('wHue'); if(hueEl) hueEl.textContent=state.wheelHue+'°';
+  const hexEl=document.getElementById('wHex'); if(hexEl) hexEl.textContent=hex;
+  const rgbEl=document.getElementById('wRgb'); if(rgbEl) rgbEl.textContent=`${r}, ${g}, ${b}`;
+  const hslEl=document.getElementById('wHsl'); if(hslEl) hslEl.textContent=`${state.wheelHue}, ${state.wheelSat}%, ${state.wheelLight}%`;
+}
+function updateLabPreview(){
+  const hex=hslToHex(state.labH,state.labS,state.labL);
+  const [r,g,b]=hslToRgb(state.labH,state.labS,state.labL);
+  document.getElementById('labPreview').style.background=hex;
+  document.getElementById('labHex').textContent=hex;
+  document.getElementById('labRgb').textContent=`${r}, ${g}, ${b}`;
+  document.getElementById('labHsl').textContent=`${state.labH}, ${state.labS}%, ${state.labL}%`;
+  document.getElementById('labHVal').textContent=state.labH+'°';
+  document.getElementById('labSVal').textContent=state.labS+'%';
+  document.getElementById('labLVal').textContent=state.labL+'%';
+}
+function updateContrast(){
+  const demo=document.getElementById('contrastDemo');
+  demo.style.background=state.contrastBg; demo.style.color=state.contrastText;
+  const ratio=contrastRatio(state.contrastText,state.contrastBg);
+  const badge=document.getElementById('ratioBadge');
+  const aa=ratio>=4.5;
+  badge.textContent=`${ratio.toFixed(1)} : 1 — ${aa?'PASS':'FAIL'}`;
+  badge.className='ratio-badge '+(aa?'pass':'fail');
+  render(); // simplest: full re-render to update pass grid too
+}
+
+/* ============================================================
+   PLAYGROUND
+============================================================ */
+function playgroundView(){
+  const hex=hslToHex(state.playH,state.playS,state.playL);
+  const [r,g,b]=hslToRgb(state.playH,state.playS,state.playL);
+  const pal=harmonyPalette(hex,state.playHarmony);
+  return `
+  <section class="wrap" style="padding-top:56px;">
+    <div class="eyebrow" style="margin-bottom:10px;">FREE PLAY</div>
+    <h1 class="headline-lg">COLOR PLAYGROUND</h1>
+    <p class="body-lg" style="margin:14px 0 40px;">Experiment. Break things. Learn.</p>
+    <div class="playground-grid">
+      <div>
+        <div class="slider-row"><div class="field-label"><span>H</span><span class="val">${state.playH}°</span></div><input type="range" min="0" max="360" value="${state.playH}" id="playH"></div>
+        <div class="slider-row"><div class="field-label"><span>S</span><span class="val">${state.playS}%</span></div><input type="range" min="0" max="100" value="${state.playS}" id="playS"></div>
+        <div class="slider-row"><div class="field-label"><span>L</span><span class="val">${state.playL}%</span></div><input type="range" min="0" max="100" value="${state.playL}" id="playL"></div>
+        <div class="readout" style="margin-bottom:20px;">
+          <div class="box"><div class="k">Hex</div><div class="v">${hex}</div></div>
+          <div class="box"><div class="k">RGB</div><div class="v">${r}, ${g}, ${b}</div></div>
+          <div class="box"><div class="k">HSL</div><div class="v">${state.playH},${state.playS}%,${state.playL}%</div></div>
+        </div>
+        <div class="field-label">HARMONY</div>
+        <div class="seg" style="margin-bottom:20px;">
+          ${[['mono','Mono'],['analogous','Analogous'],['complementary','Complementary'],['triadic','Triadic']].map(([k,n])=>`<button class="seg-btn ${state.playHarmony===k?'active':''}" data-play-harmony="${k}">${n}</button>`).join('')}
+        </div>
+        <div class="pg-actions">
+          <button class="btn btn-primary btn-sm" id="pgSave">SAVE</button>
+          <button class="btn btn-secondary btn-sm" id="pgCopy">COPY</button>
+          <button class="btn btn-ghost btn-sm" id="pgReset">RESET</button>
+        </div>
+        ${state.savedPalettes.length?`<div class="saved-row">
+          ${state.savedPalettes.map(p=>`<div class="saved-chip"><span class="sw" style="background:${p.colors[0]}"></span>${p.name}</div>`).join('')}
+        </div>`:''}
+      </div>
+      <div>
+        <div class="pg-preview" style="background:${hex}; margin-bottom:16px;"></div>
+        <div class="harmony-palette" style="margin:0;">
+          ${pal.map(c=>`<div class="harmony-sw" style="background:${c}"><span class="lbl">${c}</span></div>`).join('')}
+        </div>
+      </div>
+    </div>
+  </section>`;
+}
+function bindPlayground(){
+  document.getElementById('playH')?.addEventListener('input',e=>{state.playH=parseInt(e.target.value); render();});
+  document.getElementById('playS')?.addEventListener('input',e=>{state.playS=parseInt(e.target.value); render();});
+  document.getElementById('playL')?.addEventListener('input',e=>{state.playL=parseInt(e.target.value); render();});
+  document.querySelectorAll('[data-play-harmony]').forEach(b=>b.addEventListener('click',()=>{state.playHarmony=b.getAttribute('data-play-harmony'); render();}));
+  document.getElementById('pgSave')?.addEventListener('click',()=>{
+    const hex=hslToHex(state.playH,state.playS,state.playL);
+    state.savedPalettes.push({name:'Palette '+(state.savedPalettes.length+1),colors:[hex]});
+    toast('Palette saved'); render();
+  });
+  document.getElementById('pgCopy')?.addEventListener('click',()=>{
+    const hex=hslToHex(state.playH,state.playS,state.playL);
+    navigator.clipboard?.writeText(hex).catch(()=>{});
+    toast('Copied '+hex);
+  });
+  document.getElementById('pgReset')?.addEventListener('click',()=>{
+    state.playH=265; state.playS=80; state.playL=52; render();
+  });
+}
+
+/* ============================================================
+   TESTS
+============================================================ */
+const MOCK_TESTS=[
+  {id:1,title:'Color Fundamentals',count:'20 questions',pass:70},
+  {id:2,title:'Color in UX',count:'20 questions',pass:70},
+  {id:3,title:'UX Color Audit',count:'Visual analysis',pass:70},
+];
+function testsView(){
+  return `
+  <section class="wrap" style="padding-top:56px; padding-bottom:80px;">
+    <div class="eyebrow" style="margin-bottom:10px;">ASSESSMENTS</div>
+    <h1 class="headline-lg" style="margin-bottom:40px;">Tests</h1>
+    <div style="display:grid; gap:14px;">
+      ${MOCK_TESTS.map(t=>{
+        const result=state.testResults[t.id];
+        return `<div class="card test-card">
+          <div>
+            <div style="font-size:12px;font-weight:700;color:var(--text-muted);margin-bottom:6px;">MOCK TEST ${String(t.id).padStart(2,'0')}</div>
+            <div style="font-size:19px;font-weight:700;">${t.title}</div>
+            <div class="meta">${t.count} · Pass at ${t.pass}%${result!==null&&result!==undefined?` · Last score ${result}%`:''}</div>
+          </div>
+          <button class="btn btn-primary" data-start-test="${t.id}">${result!==null&&result!==undefined?'RETAKE':'START →'}</button>
+        </div>`;
+      }).join('')}
+    </div>
+  </section>`;
+}
+function testTakingView(){
+  const t=MOCK_TESTS.find(m=>m.id===state.activeTestId);
+  const qs=QUESTIONS; // pooled bank as the "20 questions" sample
+  const idx=clamp(state.testIndex,0,qs.length-1);
+  if(state.testIndex>=qs.length){
+    const correct=Object.values(state.testAnswered).filter(v=>v.correct).length;
+    const pct=Math.round((correct/qs.length)*100);
+    state.testResults[t.id]=pct;
+    const weak=Object.entries(
+      qs.reduce((acc,q)=>{ const a=state.testAnswered[q.id]; if(a && !a.correct){ const l=LESSONS.find(ls=>ls.id===q.lesson); acc[l.title]=(acc[l.title]||0)+1;} return acc;},{})
+    ).sort((a,b)=>b[1]-a[1]).slice(0,3).map(x=>x[0]);
+    return `<section class="wrap" style="padding-top:56px; text-align:center;">
+      <div class="eyebrow" style="margin-bottom:10px;">RESULT</div>
+      <h1 class="headline-lg">${pct}%</h1>
+      <p class="body-lg" style="margin:12px 0 30px;">${pct>=t.pass?'You passed.':'Not quite — review the concepts below.'}</p>
+      <div class="grid-2" style="text-align:left; max-width:640px; margin:0 auto;">
+        <div class="card"><div class="stage-label">CORRECT</div><div class="headline-md">${correct} / ${qs.length}</div></div>
+        <div class="card"><div class="stage-label">WEAK AREAS</div>${weak.length?weak.map(w=>`<div class="body-md">• ${w}</div>`).join(''):'<div class="body-md">None — great work.</div>'}</div>
+      </div>
+      <div style="margin-top:32px;"><button class="btn btn-primary" data-nav="tests">BACK TO TESTS</button></div>
+    </section>`;
+  }
+  const q=qs[idx];
+  const answered=state.testAnswered[q.id];
+  return `<section class="wrap" style="padding-top:56px;">
+    <div class="quiz-card">
+      <div class="quiz-progress">${idx+1} / ${qs.length} · ${t.title.toUpperCase()}</div>
+      <div class="quiz-q">${q.q}</div>
+      <div class="quiz-options">
+        ${q.options.map((opt,i)=>{
+          let cls='quiz-opt';
+          if(answered){ if(i===q.correct) cls+=' correct'; else if(i===answered.sel) cls+=' incorrect'; else cls+=' dim'; }
+          return `<button class="${cls}" data-test-opt="${i}" ${answered?'disabled':''}>${opt}</button>`;
+        }).join('')}
+      </div>
+      ${answered?`<div style="text-align:center;margin-top:24px;"><button class="btn btn-primary" id="testContinue">${idx<qs.length-1?'Continue →':'See results →'}</button></div>`:''}
+    </div>
+  </section>`;
+}
+function bindTests(){
+  document.querySelectorAll('[data-start-test]').forEach(b=>b.addEventListener('click',()=>{
+    state.activeTestId=parseInt(b.getAttribute('data-start-test'));
+    state.testIndex=0; state.testAnswered={};
+    nav('testtaking');
+  }));
+}
+function bindTestTaking(){
+  document.querySelectorAll('[data-test-opt]').forEach(b=>b.addEventListener('click',()=>{
+    const qs=QUESTIONS;
+    const q=qs[state.testIndex];
+    const i=parseInt(b.getAttribute('data-test-opt'));
+    state.testAnswered[q.id]={sel:i,correct:i===q.correct};
+    render();
+  }));
+  document.getElementById('testContinue')?.addEventListener('click',()=>{ state.testIndex++; render(); });
+}
+
+/* ============================================================
+   PROGRESS
+============================================================ */
+function progressView(){
+  const pct=Math.round((state.completedLessons.size/12)*100);
+  return `<section class="wrap" style="padding-top:56px; padding-bottom:80px;">
+    <div class="eyebrow" style="margin-bottom:10px;">OVERVIEW</div>
+    <h1 class="headline-lg" style="margin-bottom:8px;">YOUR PROGRESS</h1>
+    <div class="headline-xl" style="font-size:64px; margin:20px 0 30px;">${pct}%</div>
+    <div class="grid-2" style="margin-bottom:48px;">
+      <div class="card">
+        <div class="stage-label">COMPLETION</div>
+        <div class="body-md" style="margin-bottom:6px;">Lessons — ${state.completedLessons.size} / 12</div>
+        <div class="progress-track" style="margin-bottom:16px;"><div class="progress-fill" style="width:${(state.completedLessons.size/12)*100}%"></div></div>
+        <div class="body-md" style="margin-bottom:6px;">Quizzes — ${state.completedLessons.size} / 12</div>
+        <div class="progress-track" style="margin-bottom:16px;"><div class="progress-fill" style="width:${(state.completedLessons.size/12)*100}%"></div></div>
+        <div class="body-md" style="margin-bottom:6px;">Mock Tests — ${Object.values(state.testResults).filter(v=>v!==null).length} / 3</div>
+        <div class="progress-track"><div class="progress-fill" style="width:${(Object.values(state.testResults).filter(v=>v!==null).length/3)*100}%"></div></div>
+      </div>
+      <div class="card">
+        <div class="stage-label">FINAL PROJECT</div>
+        <div class="headline-md" style="margin-bottom:16px;">${state.finalProjectDone?'Complete':'Not started'}</div>
+        <button class="btn btn-secondary btn-sm" data-open-lesson="11">${state.finalProjectDone?'REVIEW':'START →'}</button>
+      </div>
+    </div>
+    <h2 class="headline-md" style="margin-bottom:20px;">SKILL PROFILE</h2>
+    <div class="skills-grid" style="margin-bottom:48px;">
+      ${Object.entries(state.skills).map(([k,v])=>`
+        <div class="skill-row">
+          <div class="name">${k}</div>
+          <div class="progress-track"><div class="progress-fill" style="width:${v}%"></div></div>
+          <div class="pct">${v}%</div>
+        </div>`).join('')}
+    </div>
+    <h2 class="headline-md" style="margin-bottom:20px;">RECOMMENDED NEXT</h2>
+    <div class="card continue-card">
+      <div>
+        <div class="continue-title">Accessibility &amp; Contrast</div>
+        <div class="continue-time">Your weakest skill area — 68%</div>
+      </div>
+      <button class="btn btn-primary" data-open-lesson="7">PRACTICE →</button>
+    </div>
+  </section>`;
+}
+
+/* ============================================================
+   PROFILE
+============================================================ */
+function profileView(){
+  const u=state.user;
+  return `<section class="wrap" style="padding-top:56px; padding-bottom:80px;">
+    <div style="display:flex; align-items:center; gap:20px; margin-bottom:40px;">
+      <div class="avatar" style="width:64px;height:64px;font-size:20px;">${u.name.split(' ').map(s=>s[0]).join('')}</div>
+      <div>
+        <h1 class="headline-md">${u.name}</h1>
+        <div class="body-md">Level ${String(u.level).padStart(2,'0')} — ${u.levelName}</div>
+      </div>
+    </div>
+    <div class="feature-row" style="margin-bottom:48px;">
+      <div class="feature-cell"><div class="num">XP</div><h3>${u.xp}</h3></div>
+      <div class="feature-cell"><div class="num">STREAK</div><h3>${u.streak} days</h3></div>
+      <div class="feature-cell"><div class="num">QUIZ ACCURACY</div><h3>${u.quizAccuracy}%</h3></div>
+    </div>
+    <h2 class="headline-md" style="margin-bottom:20px;">ACHIEVEMENTS</h2>
+    <div class="badge-grid">
+      ${ACHIEVEMENT_DEFS.map(a=>{
+        const unlocked=state.achievementsUnlocked.has(a.id);
+        return `<div class="badge ${unlocked?'':'locked'}"><div class="ic">${a.ic}</div><div class="n">${a.name}</div></div>`;
+      }).join('')}
+    </div>
+  </section>`;
+}
+
+/* ============================================================
+   CERTIFICATE
+============================================================ */
+function certificateView(){
+  return `<section class="wrap" style="padding:70px 0 100px;">
+    <div style="text-align:center; margin-bottom:20px;">
+      <div class="eyebrow">FINAL SCORE</div>
+      <div class="headline-xl" style="font-size:72px;">92 / 100</div>
+    </div>
+    <div style="text-align:center; margin-bottom:50px;">
+      <div class="eyebrow" style="margin-bottom:12px;">YOU'VE MASTERED</div>
+      <div class="seg" style="justify-content:center;">
+        ${['Color Fundamentals','Harmony','Color Systems','Accessibility','Hierarchy'].map(s=>`<span class="chip">${s}</span>`).join('')}
+      </div>
+    </div>
+    <div class="cert">
+      <div class="k1">COLOR THEORY</div>
+      <div class="title">CERTIFICATE OF COMPLETION</div>
+      <p class="body-md">This certifies that</p>
+      <div class="name">${state.user.name.toUpperCase()}</div>
+      <p class="body-md">has completed</p>
+      <div style="font-size:16px; font-weight:700; margin-top:8px;">COLOR THEORY FOR UX/UI DESIGN</div>
+      <div class="score">92 / 100</div>
+      <div class="k1" style="margin-top:30px;">COLORLAB</div>
+    </div>
+    <div style="text-align:center; margin-top:40px;"><button class="btn btn-secondary" data-nav="dashboard">BACK TO DASHBOARD</button></div>
+  </section>`;
+}
+
+/* ============================================================
+   VIEW-SPECIFIC BIND ROUTER
+============================================================ */
+function bindView(){
+  document.querySelectorAll('[data-open-lesson]').forEach(el=>el.addEventListener('click',()=>{
+    openLesson(parseInt(el.getAttribute('data-open-lesson')));
+  }));
+  if(state.view==='landing') bindLandingOrb();
+  if(state.view==='lesson'){
+    const lesson=LESSONS.find(l=>l.id===state.lessonId)||LESSONS[0];
+    bindLessonEvents(lesson,state.step);
+    if(state.step===1||state.step===2){
+      // reposition wheel on resize
+      setTimeout(()=>positionWheelHandle(),0);
+    }
+  }
+  if(state.view==='playground') bindPlayground();
+  if(state.view==='tests') bindTests();
+  if(state.view==='testtaking') bindTestTaking();
+}
+
+/* init */
+render();
+window.addEventListener('resize',()=>{ if(state.view==='lesson') positionWheelHandle(); });
+</script>
+</body>
+</html>
